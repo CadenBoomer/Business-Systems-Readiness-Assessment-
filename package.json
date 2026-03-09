@@ -1,0 +1,28 @@
+{
+  "name": "business-systems-readiness-assessment-",
+  "version": "1.0.0",
+  "description": "Build a web application that: - Collects structured assessment answers - Sends responses to the ML Classification API - Stores submissions - Displays a polished results report - Includes a simple admin area so admin can edit questions, pathway descriptions, and recommendations without code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CadenBoomer/Business-Systems-Readiness-Assessment-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CadenBoomer/Business-Systems-Readiness-Assessment-/issues"
+  },
+  "homepage": "https://github.com/CadenBoomer/Business-Systems-Readiness-Assessment-#readme",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "mysql2": "^3.19.1"
+  }
+}
