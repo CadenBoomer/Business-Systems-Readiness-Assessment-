@@ -12,3 +12,17 @@ confidence_score DECIMAL(4,2), --  A number between 0 and 1 that says how confid
 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE questions (
+id INT AUTO_INCREMENT PRIMARY KEY,
+question_text TEXT NOT NULL,   -- The question itself
+display_order INT NOT NULL,   -- Displays what order the questions appear in. Will go up to 12. Admin might want to reorder questions later without deleting and recreating them. They can just change the display_order number.
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE answer_options (
+id INT AUTO_INCREMENT PRIMARY KEY,
+question_id INT NOT NULL,  -- Links answer back to question. If question 1 has id of 1, all the answer options for that question will have question_id of 1. This is the foreign key relationship.
+answer_text VARCHAR(255) NOT NULL,  -- Actual answer text. Will be displayed as a button on frontend
+display_order INT NOT NULL,  -- Same idea as in the questions table
+FOREIGN KEY (question_id) REFERENCES questions(id) ON DELETE CASCADE     -- One question has many answer options. 
+);
