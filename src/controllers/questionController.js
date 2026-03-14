@@ -1,13 +1,13 @@
-const db = require('../models/db');
+const pool = require('../models/db');
 
 
 //Gets all questions with answer options
 exports.getQuestions = async (req, res) => {
     try{
-        const [questions] = await db.query('SELECT * FROM questions ORDER BY display_order');
+        const [questions] = await pool.query('SELECT * FROM questions ORDER BY display_order');
 
         for(let question of questions){
-            const [options] = await db.query('SELECT * FROM answer_options WHERE question_id = ? ORDER BY display_order', 
+            const [options] = await pool.query('SELECT * FROM answer_options WHERE question_id = ? ORDER BY display_order', 
         [question.id]
     );
             question.options = options;
@@ -19,14 +19,13 @@ exports.getQuestions = async (req, res) => {
         res.status(500).json({error: 'Internal server error'});
 
     }
-}
-
+};
 
 //Create a new question
 exports.createQuestion = async (req, res) => {
      const { question_text, display_order } = req.body;
     try{
-        const [result] = await db.query('INSERT INTO questions (question_text, display_order) VALUES (?, ?)',
+        const [result] = await pool.query('INSERT INTO questions (question_text, display_order) VALUES (?, ?)',
             [question_text, display_order]
         );
         res.status(201).json({
@@ -39,7 +38,7 @@ exports.createQuestion = async (req, res) => {
         res.status(500).json({error: 'Internal server error'});
     
     }
-}
+};
 
 
 //Update/Edit a question
@@ -47,7 +46,7 @@ exports.updateQuestion = async (req, res) => {
     const id = req.params.id;
     const { question_text, display_order } = req.body;
     try{
-        await db.query('UPDATE questions SET question_text = ?, display_order = ? WHERE id = ?',
+        await pool.query('UPDATE questions SET question_text = ?, display_order = ? WHERE id = ?',
             [question_text, display_order, id]
         );
         res.status(200).json({
@@ -58,13 +57,13 @@ exports.updateQuestion = async (req, res) => {
         res.status(500).json({error: 'Internal server error'});
     
     }
-}
+};
 
 //Delete a question
 exports.deleteQuestion = async (req, res) => {
     const id = req.params.id;
     try{
-        await db.query('DELETE FROM questions WHERE id = ?',
+        await pool.query('DELETE FROM questions WHERE id = ?',
             [id]
         );
         res.status(200).json({
@@ -74,7 +73,7 @@ exports.deleteQuestion = async (req, res) => {
             console.log(error);
             res.status(500).json({error: 'Internal server error'});
     }
-}
+};
 
 
 

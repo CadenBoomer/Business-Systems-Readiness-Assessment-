@@ -5,6 +5,7 @@ require('dotenv').config();
 const assessmentRoutes = require('./src/routes/assessmentRoutes');
 const questionRoutes = require('./src/routes/questionRoutes');
 const answerRoutes = require('./src/routes/answerRoutes');
+const authRoutes = require('./src/routes/authRoutes');
 
 
 const app = express();
@@ -14,6 +15,8 @@ app.use(express.json());
 app.use('/api', assessmentRoutes); // Registers assessment Route
 app.use('/api', questionRoutes); // Registers question Route
 app.use('/api', answerRoutes); // Registers answer Route
+app.use('/api', authRoutes); // Registers auth Route
+
 
 
 app.get('/', (req, res) => {
