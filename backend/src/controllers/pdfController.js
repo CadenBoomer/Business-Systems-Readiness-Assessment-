@@ -18,8 +18,11 @@ exports.downloadPDF = async (req, res) => {
             submission.last_name,
             submission.pathway,
             submission.reasoning,
-            submission.confidence_score
-
+            submission.confidence_score,
+            submission.summary,
+            JSON.parse(submission.priority_actions),
+            JSON.parse(submission.anti_priority_warnings),
+            submission.graduation_outlook
         )
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="results.pdf"`);
@@ -53,7 +56,7 @@ exports.downloadPDF = async (req, res) => {
 //  like submission.first_name instead of rows[0].first_name every time.
 
 
-// The reason you use submission.pathway instead of placeholders is because at this point you're not inserting 
+// The reason you use submission.pathway instead of placeholders is because at this point you're not inserting
 // data, you're reading data that's already in the database.
 // Here you just READ what's already there
 // const submission = rows[0];
@@ -83,3 +86,11 @@ exports.downloadPDF = async (req, res) => {
 // → get PDF buffer back
 // → tell browser it's a PDF and to download it
 // → send the PDF
+
+
+// Why JSON.parse on those two?
+// When you saved priority_actions and anti_priority_warnings to the database you used JSON.stringify to convert the arrays into strings. Now when you read them back from the database they're still strings. JSON.parse converts them back into arrays so forEach can loop through them properly.
+// So:
+
+// JSON.stringify → array to string (when saving to DB)
+// JSON.parse → string back to array (when reading from DB)

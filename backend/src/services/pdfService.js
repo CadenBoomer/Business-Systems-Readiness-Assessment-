@@ -1,6 +1,6 @@
 const PDFDocument = require('pdfkit');
 
-const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score) => {
+const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument(); //Creates a new blank PDF document. Like opening a new Word document.
         const buffers = [];   //An empty array that will collect the PDF data in chunks as it's being built.
@@ -25,6 +25,29 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         doc.fontSize(12).text (reasoning)
         doc.moveDown();
         doc.fontSize(14).text (`Confidence Score: ${(parseFloat(confidence_score) * 100).toFixed(0)}%`);
+
+        doc.fontSize(14).text ('Summary:')
+        doc.fontSize(12).text (summary)
+        doc.moveDown();
+
+        doc.fontSize(14).text ('Priority Actions:')
+        priority_actions.forEach((action, index) => {
+            doc.fontSize(12).text (`${index + 1}. ${action}`)
+        });
+        doc.moveDown();
+
+        doc.fontSize(14).text ('Anti-Priority Warnings:')
+        anti_priority_warnings.forEach((warning, index) => {
+            doc.fontSize(12).text (`${index + 1}. ${warning}`)
+        });
+        
+        doc.moveDown();     
+
+        doc.fontSize(14).text ('Graduation Outlook:')
+        
+        doc.moveDown();
+
+
 
         doc.end() //Tells PDFKit "I'm done adding content, finish building the PDF now." This is what triggers 
         // the end event above.
@@ -75,3 +98,9 @@ module.exports = generatePDF;
 
 // PDFKit just fires its own custom events (data, end, error) instead of browser events like click or 
 // submit. Same concept though.
+
+
+
+// `priority_actions` and `anti_priority_warnings` are **arrays** not strings. So you can't just do `doc.text(priority_actions)` because it would print something ugly.
+// All on one line, no numbering, messy.
+// So instead forEach loops through the array and prints each item on its own line:

@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 // are the credentials to log in with." It's like configuring Outlook before you can send emails.
 //This must be later configured to send from Julie's email of choosing, not my own
 
-const sendMail = async (toEmail, first_name, pathway, reasoning, confidence_score, pdfBuffer) => {
+const sendMail = async (toEmail, first_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer) => {
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: toEmail,
@@ -24,10 +24,25 @@ const sendMail = async (toEmail, first_name, pathway, reasoning, confidence_scor
       <h2>Your Pathway: ${pathway}</h2>
       <p><strong>Reasoning:</strong> ${reasoning}</p>
       <p><strong>Confidence Score:</strong> ${(parseFloat(confidence_score) * 100).toFixed(0)}%</p>
+        <h3>Summary</h3>
+        <p>${summary}</p>
+
+        <h3>Priority Actions</h3>
+        <ol>
+            ${priority_actions.map(action => `<li>${action}</li>`).join('')}
+        </ol>
+
+        <h3>Warnings</h3>
+        <ul>
+            ${anti_priority_warnings.map(warning => `<li>${warning}</li>`).join('')}
+        </ul>
+
+        <h3>Graduation Outlook</h3>
+        <p>${graduation_outlook}</p>
       <br/>
       <p>Thank you for completing the assessment!</p>
     `,
-        attachments:[
+        attachments: [
             {
                 filename: 'Assessment Results.pdf',
                 content: pdfBuffer,
@@ -52,9 +67,9 @@ module.exports = sendMail;
 
 
 // pdfBuffer
-// A buffer is just raw binary data stored in memory. When generatePDF runs it doesn't save a file to your 
-// computer — it just holds the PDF data in memory as a buffer. You then pass that chunk of data directly 
-// into the email attachment. No file ever gets saved to disk, it just flows through memory straight into 
+// A buffer is just raw binary data stored in memory. When generatePDF runs it doesn't save a file to your
+// computer — it just holds the PDF data in memory as a buffer. You then pass that chunk of data directly
+// into the email attachment. No file ever gets saved to disk, it just flows through memory straight into
 // the email.
 
 
@@ -81,7 +96,7 @@ module.exports = sendMail;
 // .toFixed(0) → removes any decimal places so it shows 95 not 95.0000
 // % → just adds the percent sign after
 
-// So 0.95 becomes 95% in the email. Clean and readable for the user instead of showing a raw decimal. 
+// So 0.95 becomes 95% in the email. Clean and readable for the user instead of showing a raw decimal.
 
 
 
@@ -94,3 +109,10 @@ module.exports = sendMail;
 // // Template literal - cleaner:
 // `Hi ${first_name} your score is ${score}`
 // Same result, template literals are just way more readable.
+
+
+// Why .map().join('') instead of forEach?
+// Inside an HTML template literal you can't use forEach directly. So instead:
+
+// .map() converts each array item into an <li> string
+// .join('') combines them all into one string that can be dropped into the HTML
