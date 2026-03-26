@@ -1,0 +1,206 @@
+.page-wrapper {
+  min-height: 100vh;
+  border: 3px solid var(--border-pink);
+  display: flex;
+  flex-direction: column;
+}
+/* 
+min-height: 100vh — makes the page at least as tall as the full viewport/screen height. vh = viewport height
+border: 3px solid var(--border-pink) — the pink border around the whole page
+display: flex — enables flexbox on this container
+flex-direction: column — stacks children vertically (header on top, content below) */
+
+.header {
+  background-color: var(--off-white);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+
+/* padding: 16px 32px — 16px top/bottom, 32px left/right
+display: flex — puts logo and title on the same row
+align-items: center — vertically centers logo and title
+justify-content: space-between — pushes logo to far left, title to far right
+border-bottom — thin grey line separating header from content */
+
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+/* Fixed size for the logo
+object-fit: contain — scales the image to fit within the 50x50 box without stretching or cropping it */
+
+.header-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+}
+/* font-weight: 700 — bold text */
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+  position: relative;
+}
+
+/* flex: 1 — makes this div grow to fill all remaining space below the header
+align-items: center — vertically centers the question area
+justify-content: center — horizontally centers the question area
+position: relative — needed so the progress dots can use position: absolute relative to this container */
+
+.question-area {
+  max-width: 700px;
+  width: 100%;
+}
+/* 
+max-width: 700px — question area never gets wider than 700px on large screens
+width: 100% — on smaller screens it fills the full available width */
+
+.question-text {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 32px;
+  color: var(--black);
+}
+/* margin-bottom: 32px — space between question text and answer buttons */
+
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+/* display: flex + flex-direction: column — stacks buttons vertically
+gap: 16px — space between each answer button
+margin-bottom: 40px — space between last button and the Next button */
+
+
+.option-btn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 24px;
+  border: 1.5px solid var(--black);
+  border-radius: 50px;
+  background-color: var(--off-white);
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+/* display: flex + align-items: center — keeps radio circle and text on the same line, vertically centered
+gap: 16px — space between radio circle and text
+border-radius: 50px — makes the pill/rounded shape
+cursor: pointer — shows hand cursor on hover
+transition: all 0.2s ease — smooth animation when state changes
+text-align: left — keeps text left aligned inside the button */
+
+.option-btn:hover {
+  background-color: #f0ede0;
+}
+/* Slightly darker beige when you hover over a button */
+
+.option-btn.selected {
+  background-color: var(--primary-pink);
+  color: var(--white);
+  border-color: var(--primary-pink);
+}
+
+/* When a button has the selected class added by Angular, it turns pink with white text and a pink border */
+
+.radio-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--black);
+  flex-shrink: 0;
+  background-color: transparent;
+}
+
+/* border-radius: 50% — makes it a perfect circle
+flex-shrink: 0 — prevents the circle from shrinking if the button text is long
+background-color: transparent — empty circle by default */
+
+.option-btn.selected .radio-circle {
+  border-color: var(--white);
+  background-color: var(--white);
+}
+
+/* When the button is selected, the radio circle inside it turns white — so it shows up against the pink background */
+
+.next-btn {
+  padding: 14px 40px;
+  background-color: var(--primary-pink);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+/* Pink pill shaped button
+border: none — removes default browser button border
+transition: opacity — smoothly fades when disabled or hovered */
+
+.next-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* When no answer is selected the button is faded to 40% opacity
+cursor: not-allowed — shows a blocked cursor so user knows they can't click yet */
+
+.next-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* Only applies hover effect when the button is NOT disabled
+:not(:disabled) prevents the hover from triggering on the greyed out state */
+/* Without the `:not(:disabled)` part, hovering over the greyed out disabled button would also trigger the
+ hover style which looks weird. This way the hover effect only works when the button is actually clickable. */
+
+.progress-dots {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* position: absolute — takes the dots out of the normal flow and positions them relative to .content-wrapper
+right: 40px — 40px from the right edge
+top: 50% + transform: translateY(-50%) — this combo perfectly centers the dots vertically. top: 50% moves it 
+down 50% but from the top of the element, so translateY(-50%) pulls it back up by half its own height to true center */
+
+.dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--primary-pink);
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+/* Small pink outlined circle
+transition: background-color — smoothly fills when answered */
+
+.dot.answered, .dot.current {
+  background-color: var(--primary-pink);
+}
+
+/* Fills the dot solid pink when that question is either currently active or already answered */

@@ -1,1 +1,135 @@
-<p>assessment works!</p>
+<div class="page-wrapper">
+    <!-- Header -->
+    <header class="header">
+        <img src='the website membership icon.png' alt='logo' class='logo'>
+        <span class='header-title'>Business Systems Pathway Assessment Tool</span>
+    </header>
+
+    <!-- Main-Content -->
+    <div class='content-wrapper'>
+
+        <!-- Questions -->
+        <div class='question-area'>
+            <h2 class='question-text'>
+                {{ currentIndex + 1 }}. {{currentQuestion.question}}
+            </h2>
+
+            <div class='options'>
+            @for (option of currentQuestion.options; track option.value) {
+            <button class="option-btn" [class.selected]="selectedAnswer === option.value"
+                (click)="selectAnswer(option.value)">
+                <span class="radio-circle" [class.filled]="selectedAnswer === option.value"></span>
+                {{ option.label }}
+            </button>
+            }
+            </div>
+
+            <!-- Next-Button -->
+            <button class = 'next-btn' [disabled] = !selectedAnswer (click) = 'nextQuestion()'>
+                {{ currentIndex === questions.length - 1 ? 'Submit' : 'Next' }}
+            </button>
+        </div>
+
+        <!-- Side-Progress-Buttons -->
+         <div class='progress-dots'>
+            @for(q of questions; track q.question){
+            <span class = 'dot'
+            [class.answered] = "answers['q' + ($index + 1)]"
+             [class.current]='$index === currentIndex'>
+            </span>
+        }
+         </div>
+
+    </div>
+</div>
+
+
+<!-- <div class="page-wrapper">
+Outer container for the whole page.  -->
+
+<!-- <header class="header"></header> -->
+<!-- The top bar. justify-content: space-between in CSS pushes the logo to the left and title to the right.  -->
+
+<!-- <div class='content-wrapper'>
+Wraps the question area and side dots together.  -->
+
+<!-- <div class='question-area'>
+Contains everything related to the current question — the text, answer buttons, and next button. -->
+
+
+<!-- <h2 class='question-text'>
+  {{ currentIndex + 1 }}. {{currentQuestion.question}}
+</h2> -->
+<!-- Displays the question number and text. currentIndex + 1 because index starts at 0 so question 1 would show as 
+ 1. not 0.. currentQuestion comes from the getter in your TypeScript that returns questions[currentIndex]. -->
+
+
+<!-- <div class='options'>
+  @for (option of currentQuestion.options; track option.value) { -->
+  <!-- Loops through the 4 options for the current question and renders a button for each. Breaking it down:
+
+
+
+@for (option of currentQuestion.options; track option.value)
+Breaking it down piece by piece:
+
+option — the variable name you give each item as you loop. You could call it anything but option makes sense here
+of — just the keyword that connects the variable to the array
+currentQuestion.options — the array you're looping through. currentQuestion is the getter from your TypeScript that
+ returns whichever question you're on, and .options is the array of 4 answer choices on that question
+track option.value — tells Angular how to uniquely identify each item in the loop. Using option.value means it 
+tracks by A, B, C, D
+
+So in plain English it's just saying "for each option in the current question's options array, do this"
+
+
+track option.value — tracks each button by its value (A/B/C/D) for performance
+[class.selected]="selectedAnswer === option.value" — adds the selected CSS class if this button is the chosen answer
+(click)="selectAnswer(option.value)" — calls selectAnswer() in TypeScript when clicked, passing A/B/C/D
+radio-circle — the circle on the left of each button
+[class.filled] — fills the circle when that option is selected -->
+
+
+<!-- 
+<button class='next-btn' [disabled]=!selectedAnswer (click)='nextQuestion()'>
+  {{ currentIndex === questions.length - 1 ? 'Submit' : 'Next' }}
+</button>
+The Next/Submit button. Breaking it down:
+
+[disabled]=!selectedAnswer — disables the button if no answer is selected yet
+(click)='nextQuestion()' — calls nextQuestion() in TypeScript
+The {{ }} is a ternary — if you're on the last question (index 11) show "Submit", otherwise show "Next" -->
+
+
+<!-- <div class='progress-dots'>
+  @for(q of questions; track q.question){
+    <span class='dot'
+      [class.answered]="answers['q' + ($index + 1)]"
+      [class.current]='$index === currentIndex'>
+    </span>
+  }
+</div>
+The side progress dots. Breaking it down:
+
+Loops through all 12 questions to create 12 dots
+track q.question — tracks each dot by the question text
+[class.answered]="answers['q' + ($index + 1)]" — fills the dot pink if that question has been answered. Checks if answers['q1'], answers['q2'] etc exists
+[class.current]='$index === currentIndex' — highlights the dot for the question you're currently on -->
+
+
+<!-- 
+$index is a built-in variable that @for automatically gives you. It tracks the position of the current item in the loop, starting at 0.
+So when looping through your 12 questions:
+
+First dot → $index = 0
+Second dot → $index = 1
+Third dot → $index = 2
+...and so on
+
+So when you write:
+html[class.answered]="answers['q' + ($index + 1)]"
+It's checking if answers['q1'], answers['q2'], answers['q3'] etc exist — which is how you stored the answers in the answers object.
+And:
+html[class.current]="$index === currentIndex"
+Highlights the dot that matches whatever question you're currently on.
+The + 1 is there because $index starts at 0 but your answer keys start at q1 not q0. Same reason we used index + 1 with forEach in the PDF.  -->
