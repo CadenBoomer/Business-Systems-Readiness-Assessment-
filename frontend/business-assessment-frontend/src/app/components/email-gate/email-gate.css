@@ -1,0 +1,140 @@
+.page-wrapper {
+    min-height: 100vh;
+    border: 3px solid var(--border-pink);
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: var(--off-white);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ddd;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.header-title {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--black);
+}
+
+.content-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 32px;
+}
+
+.gate-area {
+    max-width: 500px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Similar to question-area but narrower — 500px instead of 700px since a form doesn't need as much width. 
+gap: 16px spaces out all the form elements vertically without needing individual margins on each one. */
+
+.gate-heading {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--black);
+}
+
+.gate-subtext {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.form-group {
+    width: 100%;
+}
+
+/* Just a wrapper div for each input. width: 100% makes sure each input stretches the full width of the form. 
+Simple but needed. */
+
+.input-field {
+    width: 100%;
+    padding: 14px 20px;
+    border: 1.5px solid var(--black);
+    border-radius: 50px;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 16px;
+    background-color: var(--off-white);
+    outline: none;
+}
+
+/* width: 100% — fills the full form width
+border-radius: 50px — pill shape matching the answer buttons
+outline: none — removes the default blue browser outline that appears when you click an input. 
+We replace it with our own style below */
+
+.input-field:focus {
+    border-color: var(--primary-pink);
+}
+
+/* 
+:focus triggers when the user clicks into the input
+Changes the border to pink instead of the default browser blue outline
+This is why we removed outline: none above — we're replacing the default focus style with our own branded one */
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* align-items: flex-start — aligns the checkbox to the top of the label text instead of center. 
+Important because if the label wraps to two lines the checkbox stays at the top not weirdly centered
+gap: 12px — space between checkbox and label text */
+
+
+.checkbox-group input[type="checkbox"] {
+    margin-top: 3px;
+    accent-color: var(--primary-pink);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* input[type="checkbox"] — this is an attribute selector. Targets only checkbox inputs, not all inputs
+accent-color: var(--primary-pink) — this is a modern CSS property that changes the checkbox tick color to pink. 
+One line instead of complex custom checkbox CSS
+margin-top: 3px — nudges the checkbox down slightly so it visually aligns with the first line of text
+flex-shrink: 0 — prevents the checkbox from shrinking if the label text is long */
+
+.submit-btn {
+    padding: 14px 40px;
+    background-color: var(--primary-pink);
+    color: var(--white);
+    border: none;
+    border-radius: 50px;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-top: 8px;
+}
+
+.submit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.submit-btn:hover:not(:disabled) {
+    opacity: 0.85;
+}

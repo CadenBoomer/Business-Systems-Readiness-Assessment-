@@ -14,13 +14,39 @@ const transporter = nodemailer.createTransport({
 // are the credentials to log in with." It's like configuring Outlook before you can send emails.
 //This must be later configured to send from Julie's email of choosing, not my own
 
-const sendMail = async (toEmail, first_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer) => {
+//  strings don't have a .map() method, only arrays do.
+
+const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer) => {
+
+    //     This checks before trying to use it:
+    // Array.isArray(priority_actions) — is it already an array?
+    // If YES → use it directly
+    // If NO → it must be a string, so JSON.parse() converts it back into an array
+    // So now it handles both cases and .map() always gets a proper array to work with.
+    // Think of it as a safety check — "make sure this is actually an array before I try to loop through it."
+    // The ? is the ternary operator — it's basically a shorthand if/else on one line.
+
+    const actions = Array.isArray(priority_actions) ? priority_actions : JSON.parse(priority_actions);
+    const warnings = Array.isArray(anti_priority_warnings) ? anti_priority_warnings : JSON.parse(anti_priority_warnings);
+
+    //     - `Array.isArray(priority_actions)` → is `priority_actions` an array?
+    // - `?` → if YES...
+    // - `priority_actions` → just use it as is
+    // - `:` → if NO...
+    // - `JSON.parse(priority_actions)` → convert it from a string back into an array
+
+    // So it's basically saying:
+    // ```
+    // Is priority_actions already an array?
+    //   YES → great, use it directly as actions
+    //   NO  → it must be a string, parse it into an array first
+    
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: toEmail,
         subject: 'Assessment Results',
         html: `
-        <h1>Hi ${first_name},</h1>
+        <h1>Hi ${first_name} ${last_name},</h1>
       <h2>Your Pathway: ${pathway}</h2>
       <p><strong>Reasoning:</strong> ${reasoning}</p>
       <p><strong>Confidence Score:</strong> ${(parseFloat(confidence_score) * 100).toFixed(0)}%</p>
@@ -29,12 +55,12 @@ const sendMail = async (toEmail, first_name, pathway, reasoning, confidence_scor
 
         <h3>Priority Actions</h3>
         <ol>
-            ${priority_actions.map(action => `<li>${action}</li>`).join('')}
+            ${actions.map(action => `<li>${action}</li>`).join('')}
         </ol>
 
         <h3>Warnings</h3>
         <ul>
-            ${anti_priority_warnings.map(warning => `<li>${warning}</li>`).join('')}
+             ${warnings.map(warning => `<li>${warning}</li>`).join('')}
         </ul>
 
         <h3>Graduation Outlook</h3>

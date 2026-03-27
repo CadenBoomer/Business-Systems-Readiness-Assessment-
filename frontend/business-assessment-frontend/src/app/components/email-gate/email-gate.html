@@ -1,1 +1,40 @@
-<p>email-gate works!</p>
+<div class='page-wrapper'>
+
+    <!-- Header -->
+    <header class="header">
+        <img src='the website membership icon.png' alt='logo' class='logo'>
+        <span class='header-title'>Business Systems Pathway Assessment Tool</span>
+    </header>
+
+    <!-- Main-Content -->
+    <div class='content-wrapper'>
+        <div class='gate-area'>
+            <h2 class='gate-heading'>You're almost there!</h2>
+            <p class='gate-subtext'>Enter your details below to unlock your personalized results.</p>
+
+            <div class="form-group">
+                <input type="text" placeholder="First Name" class="input-field" [(ngModel)]="firstName">
+            </div>
+
+            <div class="form-group">
+                <input type="text" placeholder="Last Name" class="input-field" [(ngModel)]="lastName">
+            </div>
+
+            <div class="form-group">
+                <input type="email" placeholder="Email Address" class="input-field" [(ngModel)]="email">
+            </div>
+
+            <div class="checkgroup-box">
+                <input type="checkbox" id='consent' [(ngModel)]="consent">
+                <label for='consent'> I agree to receive emails with my results and related content. </label>
+            </div>
+
+            <button class="submit-btn" [disabled]="!isFormValid()" (click)="submitForm()">
+                Send My Results
+            </button>
+
+            <!-- [disabled]="!isFormValid()" — calls isFormValid() from TypeScript. If it returns false the button is disabled. The ! flips it — so if the form is NOT valid, disable the button
+            (click)="submitForm()" — calls submitForm() when clicked -->
+        </div>
+    </div>
+</div>
