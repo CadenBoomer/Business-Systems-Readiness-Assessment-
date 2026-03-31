@@ -1,1 +1,87 @@
-<p>results works!</p>
+<div class='page-wrapper'>
+
+    <!-- Header -->
+    <header class="header">
+        <img src="the website membership icon.png" alt="logo" class="logo">
+        <span class="header-title">Business Systems Pathway Assessment Tool</span>
+    </header>
+
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="results-area">
+
+            <!-- Pathway Badge -->
+            <div class="pathway-badge">
+                {{ pathway }}
+            </div>
+
+            <!-- Reasoning -->
+            <section class="section">
+                <h2 class="section-title">Your Assessment</h2>
+                <p class="section-text">{{ reasoning }}</p>
+            </section>
+
+            <!-- Summary -->
+            <section class="section">
+                <h2 class="section-title">Business Systems Narrative</h2>
+                <p class="section-text">{{ summary }}</p>
+            </section>
+
+            <!-- Priority Actions -->
+            <section class="section">
+                <h2 class="section-title">Recommended Focus Areas</h2>
+                <ul class="action-list">
+                    @for (action of priorityActions; track $index) {
+                    <li class="action-item">{{ action }}</li>
+                    }
+                </ul>
+            </section>
+
+            <!-- Anti Priority Warnings -->
+            <section class="section">
+                <h2 class="section-title">What to Avoid Right Now</h2>
+                <ul class="warning-list">
+                    @for (warning of antiPriorityWarnings; track $index) {
+                    <li class="warning-item">{{ warning }}</li>
+                    }
+                </ul>
+            </section>
+
+            <!-- Graduation Outlook -->
+            <section class="section">
+                <h2 class="section-title">Graduation Outlook</h2>
+                <p class="section-text">{{ graduationOutlook }}</p>
+            </section>
+
+
+            <!-- Confidence Score -->
+            <div class="confidence">
+                <span>Model Confidence: {{ (confidenceScore * 100).toFixed(0) }}%</span> 
+                <!-- (confidenceScore * 100).toFixed(0) converts 0.94 to 94% -->
+            </div>
+
+            <!-- Actions -->
+            <div class="cta-area">
+                <button class="download-btn" (click)="downloadPDF()">
+                    Download My Results
+                </button>
+                <a class="cta-btn" href="https://thewebsitemembership.com" target="_blank">
+                    Explore The Website Membership
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Each section maps to a field from the ML response
+@for loops through priorityActions and antiPriorityWarnings to render each as a list item
+downloadPDF() is called when the download button is clicked
+The CTA link opens The Website Membership in a new tab — update the URL to the real one -->
+
+<!-- We loop through priorty actions and anti-priority actions because they are arrays of strings, so we need to 
+render each string as a separate list item. The other fields are just single strings, so we can render them 
+directly without looping. -->

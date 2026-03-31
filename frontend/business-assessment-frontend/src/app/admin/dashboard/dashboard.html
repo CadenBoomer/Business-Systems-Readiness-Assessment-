@@ -1,1 +1,157 @@
-<p>dashboard works!</p>
+<div class="page-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+        <img src="the website membership icon.png" alt="logo" class="logo">
+        <span class="header-title">Admin Dashboard</span>
+        <button class="logout-btn" (click)="logout()">Logout</button>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn" [class.active]="activeTab === 'questions'" (click)="activeTab = 'questions'">
+            Questions
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'submissions'" (click)="activeTab = 'submissions'">
+            Submissions
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
+            Settings
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+
+        <!-- Questions Tab -->
+        @if (activeTab === 'questions') {
+        <div class="section">
+
+            <h2 class="section-title">Questions</h2>
+
+            <!-- Add Question Form -->
+            <div class="form-card">
+                <h3 class="form-title">Add New Question</h3>
+                <input type="text" placeholder="Question text" class="input-field" [(ngModel)]="newQuestion">
+                <input type="number" placeholder="Display order" class="input-field" [(ngModel)]="newDisplayOrder">
+                <button class="add-btn" (click)="addQuestion()">Add Question</button>
+            </div>
+
+            <!-- Questions List -->
+            @for (question of questions; track question.id) {
+            <div class="question-card">
+
+                <!-- Edit Mode -->
+                @if (editingQuestion?.id === question.id) {
+                <div class="edit-form">
+                    <input type="text" class="input-field" [(ngModel)]="editingQuestion.question_text">
+                    <input type="number" class="input-field" [(ngModel)]="editingQuestion.display_order">
+                    <div class="btn-row">
+                        <button class="save-btn" (click)="saveQuestion()">Save</button>
+                        <button class="cancel-btn" (click)="editingQuestion = null">Cancel</button>
+                    </div>
+                </div>
+                } @else {
+                <!-- View Mode -->
+                <div class="question-header">
+                    <p class="question-text">{{ question.display_order }}. {{ question.question_text }}</p>
+                    <div class="btn-row">
+                        <button class="edit-btn" (click)="editQuestion(question)">Edit</button>
+                        <button class="delete-btn" (click)="deleteQuestion(question.id)">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Answer Options -->
+                <div class="options-section">
+                    <h4 class="options-title">Answer Options</h4>
+
+                    @for (option of question.options; track option.id) {
+                    <div class="option-row">
+                        @if (editingOption?.id === option.id) {
+                        <input type="text" class="input-field" [(ngModel)]="editingOption.option_text">
+                        <input type="number" class="input-field" [(ngModel)]="editingOption.display_order">
+                        <button class="save-btn" (click)="saveOption()">Save</button>
+                        <button class="cancel-btn" (click)="editingOption = null">Cancel</button>
+                        } @else {
+                        <span class="option-text">{{ option.display_order }}. {{ option.option_text }}</span>
+                        <div class="btn-row">
+                            <button class="edit-btn" (click)="editOption(option)">Edit</button>
+                            <button class="delete-btn" (click)="deleteOption(option.id)">Delete</button>
+                        </div>
+                        }
+                    </div>
+                    }
+
+                    <!-- Add Option Form -->
+                    <div class="add-option-form">
+                        <input type="text" placeholder="New option text" class="input-field" [(ngModel)]="newOptionText"
+                            (focus)="selectQuestion(question)">
+                        <input type="number" placeholder="Display order" class="input-field"
+                            [(ngModel)]="newOptionOrder" (focus)="selectQuestion(question)">
+                        <button class="add-btn" (click)="selectQuestion(question); addOption()">Add Option</button>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Submissions Tab -->
+        @if (activeTab === 'submissions') {
+        <div class="section">
+            <h2 class="section-title">Submissions</h2>
+
+            @for (submission of submissions; track submission.id) {
+            <div class="submission-card">
+                <div class="submission-header">
+                    <div>
+                        <p class="submission-name">{{ submission.first_name }} {{ submission.last_name }}</p>
+                        <p class="submission-email">{{ submission.email }}</p>
+                        <p class="submission-date">{{ submission.created_at | date:'medium' }}</p>
+                    </div>
+                    <div class="submission-right">
+                        <span class="pathway-badge">{{ submission.pathway }}</span>
+                        <button class="download-btn" (click)="downloadSubmissionPDF(submission.id)">
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Settings Tab -->
+        @if (activeTab === 'settings') {
+        <div class="section">
+            <h2 class="section-title">Settings</h2>
+
+            @for (setting of settings; track setting.id) {
+            <div class="question-card">
+                <div class="question-header">
+
+                    @if (editingSetting?.id === setting.id) {
+                    <div class="edit-form" style="width: 100%">
+                        <p class="question-text">{{ setting.setting_key }}</p>
+                        <input type="text" class="input-field" [(ngModel)]="editingSetting.setting_value">
+                        <div class="btn-row">
+                            <button class="save-btn" (click)="saveSetting()">Save</button>
+                            <button class="cancel-btn" (click)="editingSetting = null">Cancel</button>
+                        </div>
+                    </div>
+                    } @else {
+                    <div style="flex: 1">
+                        <p class="question-text">{{ setting.setting_key }}</p>
+                        <p style="font-size: 14px; color: #555; margin: 4px 0 0 0;">{{ setting.setting_value }}</p>
+                    </div>
+                    <button class="edit-btn" (click)="editSetting(setting)">Edit</button>
+                    }
+
+                </div>
+            </div>
+            }
+        </div>
+        }
+    </div>
+</div>

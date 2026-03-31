@@ -1,0 +1,99 @@
+.page-wrapper {
+  min-height: 100vh;
+  border: 3px solid var(--border-pink);
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  background-color: var(--off-white);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.header-title {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 32px;
+}
+
+.login-area {
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-heading {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.input-field {
+  width: 100%;
+  padding: 14px 20px;
+  border: 1.5px solid var(--black);
+  border-radius: 50px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  background-color: var(--off-white);
+  outline: none;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: var(--primary-pink);
+}
+
+.error-msg {
+  color: var(--primary-pink);
+  font-size: 14px;
+  margin: 0;
+}
+
+.login-btn {
+  padding: 14px 40px;
+  background-color: var(--primary-pink);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  margin-top: 8px;
+}
+
+.login-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.login-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}

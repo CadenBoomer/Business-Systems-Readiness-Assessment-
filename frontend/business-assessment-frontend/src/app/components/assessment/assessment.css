@@ -1,6 +1,6 @@
 .page-wrapper {
   min-height: 100vh;
-  border: 3px solid var(--border-pink);
+  /* border: 3px solid var(--border-pink); */
   display: flex;
   flex-direction: column;
 }
@@ -204,3 +204,28 @@ transition: background-color — smoothly fills when answered */
 }
 
 /* Fills the dot solid pink when that question is either currently active or already answered */
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 32px;
+}
+
+.back-btn {
+  padding: 14px 40px;
+  background-color: transparent;
+  color: var(--black);
+  border: 2px solid var(--black);
+  border-radius: 50px;
+  font-family: 'League Spartan', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background-color: var(--black);
+  color: var(--white);
+}

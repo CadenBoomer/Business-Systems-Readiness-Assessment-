@@ -1,70 +1,74 @@
 <div class="page-wrapper">
-    <!-- Header -->
-    <header class="header">
-        <img src='the website membership icon.png' alt='logo' class='logo'>
-        <span class='header-title'>Business Systems Pathway Assessment Tool</span>
-    </header>
+  <!-- Header -->
+  <header class="header">
+    <img src='the website membership icon.png' alt='logo' class='logo'>
+    <span class='header-title'>Business Systems Pathway Assessment Tool</span>
+  </header>
 
-    <!-- Main-Content -->
-    <div class='content-wrapper'>
+  <!-- Main-Content -->
+  <div class='content-wrapper'>
 
-        <!-- Questions -->
-        <div class='question-area'>
-            <h2 class='question-text'>
-                {{ currentIndex + 1 }}. {{currentQuestion.question}}
-            </h2>
+    <!-- Questions -->
+    <div class='question-area'>
+      <h2 class='question-text'>
+        {{ currentIndex + 1 }}. {{currentQuestion.question}}
+      </h2>
 
-            <div class='options'>
-            @for (option of currentQuestion.options; track option.value) {
-            <button class="option-btn" [class.selected]="selectedAnswer === option.value"
-                (click)="selectAnswer(option.value)">
-                <span class="radio-circle" [class.filled]="selectedAnswer === option.value"></span>
-                {{ option.label }}
-            </button>
-            }
-            </div>
-
-            <!-- Next-Button -->
-            <button class = 'next-btn' [disabled] = !selectedAnswer (click) = 'nextQuestion()'>
-                {{ currentIndex === questions.length - 1 ? 'Submit' : 'Next' }}
-            </button>
-        </div>
-
-        <!-- Side-Progress-Buttons -->
-         <div class='progress-dots'>
-            @for(q of questions; track q.question){
-            <span class = 'dot'
-            [class.answered] = "answers['q' + ($index + 1)]"
-             [class.current]='$index === currentIndex'>
-            </span>
+      <div class='options'>
+        @for (option of currentQuestion.options; track option.value) {
+        <button class="option-btn" [class.selected]="selectedAnswer === option.value"
+          (click)="selectAnswer(option.value)">
+          <span class="radio-circle" [class.filled]="selectedAnswer === option.value"></span>
+          {{ option.label }}
+        </button>
         }
-         </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="nav-buttons">
+        @if (currentIndex > 0) {
+        <button class="back-btn" (click)="previousQuestion()">
+          Back
+        </button>
+        }
+        <button class="next-btn" [disabled]="!selectedAnswer" (click)="nextQuestion()">
+          {{ currentIndex === questions.length - 1 ? 'Submit' : 'Next' }}
+        </button>
+      </div>
+
+      <!-- Side-Progress-Buttons -->
+      <div class='progress-dots'>
+        @for(q of questions; track q.question){
+        <span class='dot' [class.answered]="answers['q' + ($index + 1)]" [class.current]='$index === currentIndex'>
+        </span>
+        }
+      </div>
 
     </div>
-</div>
+  </div>
 
 
-<!-- <div class="page-wrapper">
+  <!-- <div class="page-wrapper">
 Outer container for the whole page.  -->
 
-<!-- <header class="header"></header> -->
-<!-- The top bar. justify-content: space-between in CSS pushes the logo to the left and title to the right.  -->
+  <!-- <header class="header"></header> -->
+  <!-- The top bar. justify-content: space-between in CSS pushes the logo to the left and title to the right.  -->
 
-<!-- <div class='content-wrapper'>
+  <!-- <div class='content-wrapper'>
 Wraps the question area and side dots together.  -->
 
-<!-- <div class='question-area'>
+  <!-- <div class='question-area'>
 Contains everything related to the current question — the text, answer buttons, and next button. -->
 
 
-<!-- <h2 class='question-text'>
+  <!-- <h2 class='question-text'>
   {{ currentIndex + 1 }}. {{currentQuestion.question}}
 </h2> -->
-<!-- Displays the question number and text. currentIndex + 1 because index starts at 0 so question 1 would show as 
+  <!-- Displays the question number and text. currentIndex + 1 because index starts at 0 so question 1 would show as 
  1. not 0.. currentQuestion comes from the getter in your TypeScript that returns questions[currentIndex]. -->
 
 
-<!-- <div class='options'>
+  <!-- <div class='options'>
   @for (option of currentQuestion.options; track option.value) { -->
   <!-- Loops through the 4 options for the current question and renders a button for each. Breaking it down:
 
@@ -90,7 +94,7 @@ radio-circle — the circle on the left of each button
 [class.filled] — fills the circle when that option is selected -->
 
 
-<!-- 
+  <!-- 
 <button class='next-btn' [disabled]=!selectedAnswer (click)='nextQuestion()'>
   {{ currentIndex === questions.length - 1 ? 'Submit' : 'Next' }}
 </button>
@@ -101,7 +105,7 @@ The Next/Submit button. Breaking it down:
 The {{ }} is a ternary — if you're on the last question (index 11) show "Submit", otherwise show "Next" -->
 
 
-<!-- <div class='progress-dots'>
+  <!-- <div class='progress-dots'>
   @for(q of questions; track q.question){
     <span class='dot'
       [class.answered]="answers['q' + ($index + 1)]"
@@ -117,7 +121,7 @@ track q.question — tracks each dot by the question text
 [class.current]='$index === currentIndex' — highlights the dot for the question you're currently on -->
 
 
-<!-- 
+  <!-- 
 $index is a built-in variable that @for automatically gives you. It tracks the position of the current item in the loop, starting at 0.
 So when looping through your 12 questions:
 

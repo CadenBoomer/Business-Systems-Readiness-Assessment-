@@ -42,3 +42,21 @@ ADD COLUMN priority_actions JSON,
 ADD COLUMN anti_priority_warnings JSON,
 ADD COLUMN graduation_outlook TEXT,
 ADD COLUMN class_probabilities JSON;
+
+INSERT INTO questions (question_text, display_order) VALUES
+('How clearly defined is your primary offer?', 1),
+('What best describes your online presence?', 2),
+('How are leads captured?', 3),
+('How structured is your CRM and customer journey?', 4),
+('What follow-up happens after inquiry?', 5),
+('How standardized is client onboarding and fulfillment?', 6),
+('How are payments and offers handled?', 7),
+('Do you actively monetize your existing database?', 8),
+('How do you generate and manage reviews?', 9),
+('How are AI tools used in your engagement process?', 10),
+('How do you track and improve performance?', 11),
+('How do you increase revenue from existing clients?', 12);
+
+SELECT * FROM questions;
+DELETE FROM questions WHERE id = 2;
+DELETE FROM questions WHERE id = 3;

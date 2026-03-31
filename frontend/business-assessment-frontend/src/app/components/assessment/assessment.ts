@@ -183,5 +183,12 @@ export class Assessment {
     }
   }
 
+  previousQuestion() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.selectedAnswer = this.answers['q' + (this.currentIndex + 1)] || '';
+    }
+  }
+
 }
 

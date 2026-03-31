@@ -29,8 +29,13 @@
                 <label for='consent'> I agree to receive emails with my results and related content. </label>
             </div>
 
-            <button class="submit-btn" [disabled]="!isFormValid()" (click)="submitForm()">
+            <button class="submit-btn" [disabled]="!isFormValid() || isLoading" (click)="submitForm()">
+                @if (isLoading) {
+                <span class="spinner"></span>
+                Sending...
+                } @else {
                 Send My Results
+                }
             </button>
 
             <!-- [disabled]="!isFormValid()" — calls isFormValid() from TypeScript. If it returns false the button is disabled. The ! flips it — so if the form is NOT valid, disable the button

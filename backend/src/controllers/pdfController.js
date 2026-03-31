@@ -13,6 +13,15 @@ exports.downloadPDF = async (req, res) => {
         }
 
         const submission = rows[0];
+
+        const priority_actions = Array.isArray(submission.priority_actions)
+            ? submission.priority_actions
+            : JSON.parse(submission.priority_actions);
+
+        const anti_priority_warnings = Array.isArray(submission.anti_priority_warnings)
+            ? submission.anti_priority_warnings
+            : JSON.parse(submission.anti_priority_warnings);
+
         const pdfBuffer = await generatePDF(
             submission.first_name,
             submission.last_name,
@@ -20,10 +29,10 @@ exports.downloadPDF = async (req, res) => {
             submission.reasoning,
             submission.confidence_score,
             submission.summary,
-            JSON.parse(submission.priority_actions),
-            JSON.parse(submission.anti_priority_warnings),
+            priority_actions,
+            anti_priority_warnings,
             submission.graduation_outlook
-        )
+        );
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="results.pdf"`);
         res.send(pdfBuffer);

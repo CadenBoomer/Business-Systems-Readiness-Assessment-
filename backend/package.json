@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/CadenBoomer/Business-Systems-Readiness-Assessment-#readme",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.81.0",
     "axios": "^1.13.6",
     "bcrpyt": "^2.0.0",
     "bcrypt": "^6.0.0",

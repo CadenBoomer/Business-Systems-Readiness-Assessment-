@@ -1,6 +1,6 @@
 .page-wrapper {
     min-height: 100vh;
-    border: 3px solid var(--border-pink);
+    /* border: 3px solid var(--border-pink); */
     display: flex;
     flex-direction: column;
 }
@@ -137,4 +137,24 @@ flex-shrink: 0 — prevents the checkbox from shrinking if the label text is lon
 
 .submit-btn:hover:not(:disabled) {
     opacity: 0.85;
+}
+
+/* This creates a spinner animation for the submit button when it's in a loading state. 
+The spinner is a small circle that rotates indefinitely to indicate that something is happening in the background 
+after the user clicks the button. The CSS uses a keyframes animation called "spin" to rotate the circle, and the
+ spinner is only shown when the isLoading variable is true in the Angular component. */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
