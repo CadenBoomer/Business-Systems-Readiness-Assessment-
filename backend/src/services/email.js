@@ -14,7 +14,11 @@ const transporter = nodemailer.createTransport({
 // are the credentials to log in with." It's like configuring Outlook before you can send emails.
 // This must be later configured to send from Julie's email of choosing, not my own
 
-const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer) => {
+const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer, settings = {}) => {
+
+    const ctaButtonText = settings.cta_button_text || 'Explore The Website Membership';
+    const ctaButtonUrl = settings.cta_button_url || 'https://thewebsitemembership.com';
+    const ctaDescription = settings.cta_description || 'Your full results report is attached as a PDF. Ready to take the next step?';
 
     // Parse if they come in as strings
     // Array.isArray checks if it's already an array — if yes use it directly, if no parse it from string
@@ -106,14 +110,14 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             <div style="border-top: 1px solid #ddd; margin: 0 32px;"></div>
 
             <!-- CTA Section — drives user to book a call or explore the membership -->
+            <!-- CTA Section — driven by database settings -->
             <div style="padding: 24px 32px;">
                 <p style="font-size: 14px; color: #555555; margin: 0 0 16px 0;">
-                    Your full results report is attached as a PDF. Ready to take the next step?
+                    ${ctaDescription}
                 </p>
-                <!-- href should be updated to Julie's actual booking/membership URL -->
-                <a href="https://thewebsitemembership.com" 
-                   style="display: inline-block; background-color: #FF206E; color: #FFFFFF; padding: 12px 32px; border-radius: 50px; text-decoration: none; font-size: 14px; font-weight: 700;">
-                    Explore The Website Membership
+                <a href="${ctaButtonUrl}" 
+                style="display: inline-block; background-color: #FF206E; color: #FFFFFF; padding: 12px 32px; border-radius: 50px; text-decoration: none; font-size: 14px; font-weight: 700;">
+                    ${ctaButtonText}
                 </a>
             </div>
 

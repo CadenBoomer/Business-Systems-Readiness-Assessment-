@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -23,6 +23,10 @@ export class Results {
   antiPriorityWarnings: string[] = [];
   graduationOutlook: string = '';
 
+  ctaButtonText: string = 'Explore The Website Membership';
+  ctaButtonUrl: string = 'https://thewebsitemembership.com';
+  ctaDescription: string = 'Your full results report is attached as a PDF. Ready to take the next step?';
+
   // Declaring all the properties with default values:
 
   // results: any = null — stores the full raw response object
@@ -31,7 +35,7 @@ export class Results {
   // number = 0 — confidence score starts at 0
 
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
 
     const state = history.state;
     if (state?.results) {
@@ -46,21 +50,39 @@ export class Results {
       this.graduationOutlook = state.results.graduation_outlook;
 
     }
+    this.loadSettings();
   }
 
-// Same history.state pattern as email gate — grabs the results passed from the email gate component
-// state?.results — checks if results exists before trying to access it
-// Then each property gets assigned its value from the response
-// state.results.submission_id uses underscore because that's what your backend returns — you then store it 
-// in submissionId camelCase on the Angular side
+  // Same history.state pattern as email gate — grabs the results passed from the email gate component
+  // state?.results — checks if results exists before trying to access it
+  // Then each property gets assigned its value from the response
+  // state.results.submission_id uses underscore because that's what your backend returns — you then store it 
+  // in submissionId camelCase on the Angular side
 
-// history.state is how Angular passes data between pages when you navigate.
+  // history.state is how Angular passes data between pages when you navigate.
 
   downloadPDF() {
     window.open(`http://localhost:3000/api/results/${this.submissionId}/pdf`, '_blank');
   }
-}
 
-// window.open — opens a URL in the browser
-// The URL hits your PDF download endpoint with the submission id
-// _blank — opens in a new tab instead of replacing the current page
+  // window.open — opens a URL in the browser
+  // The URL hits your PDF download endpoint with the submission id
+  // _blank — opens in a new tab instead of replacing the current page
+
+
+  loadSettings() {
+    this.http.get<any[]>('http://localhost:3000/api/settings')
+      .subscribe({
+        next: (settings) => {
+          settings.forEach(setting => {
+            if (setting.setting_key === 'cta_button_text') this.ctaButtonText = setting.setting_value;
+            if (setting.setting_key === 'cta_button_url') this.ctaButtonUrl = setting.setting_value;
+            if (setting.setting_key === 'cta_description') this.ctaDescription = setting.setting_value;
+          });
+           this.cdr.detectChanges();
+        },
+        error: (err) => console.error(err)
+      });
+      
+  }
+}

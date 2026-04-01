@@ -57,17 +57,18 @@
 
             <!-- Confidence Score -->
             <div class="confidence">
-                <span>Model Confidence: {{ (confidenceScore * 100).toFixed(0) }}%</span> 
+                <span>Model Confidence: {{ (confidenceScore * 100).toFixed(0) }}%</span>
                 <!-- (confidenceScore * 100).toFixed(0) converts 0.94 to 94% -->
             </div>
 
             <!-- Actions -->
             <div class="cta-area">
+                <p class="cta-description">{{ ctaDescription }}</p>
                 <button class="download-btn" (click)="downloadPDF()">
                     Download My Results
                 </button>
-                <a class="cta-btn" href="https://thewebsitemembership.com" target="_blank">
-                    Explore The Website Membership
+                <a class="cta-btn" [href]="ctaButtonUrl" target="_blank">
+                    {{ ctaButtonText }}
                 </a>
             </div>
 

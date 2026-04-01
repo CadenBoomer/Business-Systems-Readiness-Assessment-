@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,12 +30,16 @@ export class Dashboard implements OnInit {
   settings: any[] = [];
   editingSetting: any = null;
 
-  constructor(private router: Router, private http: HttpClient) { }
+  pathways: any[] = [];
+  editingPathway: any = null;
+
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadQuestions();
     this.loadSubmissions();
     this.loadSettings();
+    this.loadPathways();
   }
 
   // Get JWT token from localStorage
@@ -77,13 +81,42 @@ export class Dashboard implements OnInit {
       });
   }
 
+  loadPathways() {
+    this.http.get<any[]>('http://localhost:3000/api/pathways',
+      { headers: this.getHeaders() })
+      .subscribe({
+        next: (data) => this.pathways = data,
+        error: (err) => console.error(err)
+      });
+  }
+
+  editPathway(pathway: any) {
+    this.editingPathway = { ...pathway };
+  }
+
+  savePathway() {
+    if (!this.editingPathway) return;
+    this.http.put(`http://localhost:3000/api/pathways/${this.editingPathway.id}`,
+      { description: this.editingPathway.description },
+      { headers: this.getHeaders() })
+      .subscribe({
+        next: () => {
+          this.editingPathway = null;
+          this.loadPathways();
+        },
+        error: (err) => console.error(err)
+      });
+  }
   // ── QUESTIONS ──────────────────────────────────────
 
   loadQuestions() {
     this.http.get<any[]>('http://localhost:3000/api/questions',
       { headers: this.getHeaders() })
       .subscribe({
-        next: (data) => this.questions = data,
+        next: (data) => {
+          this.questions = data;
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error(err)
       });
   }

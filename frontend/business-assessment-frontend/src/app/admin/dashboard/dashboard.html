@@ -9,7 +9,8 @@
 
     <!-- Tabs -->
     <div class="tabs">
-        <button class="tab-btn" [class.active]="activeTab === 'questions'" (click)="activeTab = 'questions'">
+        <button class="tab-btn" [class.active]="activeTab === 'questions'"
+            (click)="activeTab = 'questions'; loadQuestions()">
             Questions
         </button>
         <button class="tab-btn" [class.active]="activeTab === 'submissions'" (click)="activeTab = 'submissions'">
@@ -17,6 +18,9 @@
         </button>
         <button class="tab-btn" [class.active]="activeTab === 'settings'" (click)="activeTab = 'settings'">
             Settings
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'pathways'" (click)="activeTab = 'pathways'">
+            Pathways
         </button>
     </div>
 
@@ -146,6 +150,40 @@
                         <p style="font-size: 14px; color: #555; margin: 4px 0 0 0;">{{ setting.setting_value }}</p>
                     </div>
                     <button class="edit-btn" (click)="editSetting(setting)">Edit</button>
+                    }
+
+                </div>
+            </div>
+            }
+        </div>
+        }
+
+        <!-- Pathways Tab -->
+        @if (activeTab === 'pathways') {
+        <div class="section">
+            <h2 class="section-title">Pathway Descriptions</h2>
+
+            @for (pathway of pathways; track pathway.id) {
+            <div class="question-card">
+                <div class="question-header">
+
+                    @if (editingPathway?.id === pathway.id) {
+                    <div class="edit-form" style="width: 100%">
+                        <p class="question-text">{{ pathway.pathway_name }}</p>
+                        <textarea class="input-field" rows="4" [(ngModel)]="editingPathway.description"
+                            style="border-radius: 12px; resize: vertical;"></textarea>
+                        <div class="btn-row">
+                            <button class="save-btn" (click)="savePathway()">Save</button>
+                            <button class="cancel-btn" (click)="editingPathway = null">Cancel</button>
+                        </div>
+                    </div>
+                    } @else {
+                    <div style="flex: 1">
+                        <p class="question-text">{{ pathway.pathway_name }}</p>
+                        <p style="font-size: 14px; color: #555; margin: 4px 0 0 0; line-height: 1.6;">{{
+                            pathway.description }}</p>
+                    </div>
+                    <button class="edit-btn" (click)="editPathway(pathway)">Edit</button>
                     }
 
                 </div>

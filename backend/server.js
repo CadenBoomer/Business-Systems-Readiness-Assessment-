@@ -8,6 +8,7 @@ const answerRoutes = require('./src/routes/answerRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const pdfRoutes = require('./src/routes/pdfRoutes');
 const settingsRoutes = require('./src/routes/settingsRoutes');
+const pathwayRoutes = require('./src/routes/pathwayRoutes');
 
 
 
@@ -21,6 +22,7 @@ app.use('/api', answerRoutes); // Registers answer Route
 app.use('/api', authRoutes); // Registers auth Route
 app.use('/api', pdfRoutes); // Registers pdf Route
 app.use('/api', settingsRoutes); // Registers settings Route
+app.use('/api', pathwayRoutes); // Registers pathway Route
 
 
 

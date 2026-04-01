@@ -30,11 +30,52 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             class_probabilities
 //         } = mlResponse.data;
 
+//         // After getting ML response, add Claude call here:
+//         const claudeResponse = await client.messages.create({
+//             model: 'claude-sonnet-4-20250514',
+//             max_tokens: 1000,
+//             system: [
+//                 {
+//                     type: 'text',
+//                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur. 
+            
+//                 Generate a personalized report with exactly these sections:
+
+//                 1. Personalized Intro - warm, encouraging, 2-3 sentences addressing their current stage directly
+//                 2. Business Systems Narrative - 2 paragraphs explaining their current situation and what changes when the right systems are in place
+//                 3. Recommended Focus Areas - 4-5 bullet points with bold titles and brief descriptions
+//                 4. Graduation Outlook - 2-3 sentences on what becomes possible next
+
+//                 Keep the tone warm, direct and non-judgmental. Do not use jargon. Maximum 500 words total.`,
+//                     cache_control: { type: 'ephemeral' }
+//                 }
+//             ],
+//             messages: [
+//                 {
+//                     role: 'user',
+//                     content: `The user has been classified into the ${pathway} pathway.
+
+//                 ML Reasoning:
+//                 ${reasoning}
+
+//                 Priority Actions:
+//                 ${priority_actions.join('\n')}
+
+//                 Anti-Priority Warnings:
+//                 ${anti_priority_warnings.join('\n')}
+
+//                 Graduation Outlook:
+//                 ${graduation_outlook}`
+//                 }
+//             ]
+//         });
+
+//         const narrativeReport = claudeResponse.content[0].text;
 
 //         //JSON.stringify(answers) converts the answers array into a string so MySQL can store it in the JSON column.
 //         const [result] = await pool.query(
-//             'INSERT INTO submissions (first_name, last_name, email, answers, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, class_probabilities) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-//             [first_name, last_name, email, JSON.stringify(responses), pathway, reasoning, confidence_score, summary, JSON.stringify(priority_actions), JSON.stringify(anti_priority_warnings), graduation_outlook, JSON.stringify(class_probabilities)
+//             'INSERT INTO submissions (first_name, last_name, email, answers, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, class_probabilities, narrative_report) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+//             [first_name, last_name, email, JSON.stringify(responses), pathway, reasoning, confidence_score, summary, JSON.stringify(priority_actions), JSON.stringify(anti_priority_warnings), graduation_outlook, JSON.stringify(class_probabilities), narrativeReport
 
 //             ]
 //         );
@@ -51,6 +92,13 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //                 graduation_outlook
 //             });
 //         }
+
+//         // Fetch CTA settings
+//         const [settingsRows] = await pool.query('SELECT * FROM settings');
+//         const settings = {};
+//         settingsRows.forEach(row => {
+//             settings[row.setting_key] = row.setting_value;
+//         });
 
 //         const pdfBuffer = await generatePDF(
 //             first_name,
@@ -75,7 +123,8 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             priority_actions,
 //             anti_priority_warnings,
 //             graduation_outlook,
-//             pdfBuffer
+//             pdfBuffer,
+//             settings
 //         );
 
 
@@ -91,7 +140,8 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             priority_actions,
 //             anti_priority_warnings,
 //             graduation_outlook,
-//             class_probabilities
+//             class_probabilities,
+//             narrative_report: narrativeReport
 
 //         });
 
@@ -140,7 +190,7 @@ exports.submitAssessment = async (req, res) => {
                 {
                     type: 'text',
                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur. 
-            
+
                 Generate a personalized report with exactly these sections:
 
             1. Personalized Intro - warm, encouraging, 2-3 sentences addressing their current stage directly
@@ -180,9 +230,16 @@ exports.submitAssessment = async (req, res) => {
             [first_name, last_name, email, JSON.stringify(responses), pathway, reasoning, confidence_score, summary, JSON.stringify(priority_actions), JSON.stringify(anti_priority_warnings), graduation_outlook, narrativeReport]
         );
 
+            // Fetch CTA settings
+            const [settingsRows] = await pool.query('SELECT * FROM settings');
+            const settings = {};
+            settingsRows.forEach(row => {
+                settings[row.setting_key] = row.setting_value;
+            });
+
         const pdfBuffer = await generatePDF(first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook);
 
-        await sendMail(email, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer);
+        await sendMail(email, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer, settings);
 
         res.status(201).json({
             message: 'Assessment submitted successfully',
@@ -197,6 +254,18 @@ exports.submitAssessment = async (req, res) => {
             narrative_report: narrativeReport
         });
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.getSubmissions = async (req, res) => {
+    try {
+        const [rows] = await pool.query(
+            'SELECT id, first_name, last_name, email, pathway, confidence_score, created_at FROM submissions ORDER BY created_at DESC'
+        );
+        res.status(200).json(rows);
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal server error' });
