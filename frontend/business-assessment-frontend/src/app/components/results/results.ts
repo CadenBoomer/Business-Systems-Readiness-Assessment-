@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { marked } from 'marked';
 
 @Component({
   selector: 'app-results',
@@ -27,6 +28,8 @@ export class Results {
   ctaButtonUrl: string = 'https://thewebsitemembership.com';
   ctaDescription: string = 'Your full results report is attached as a PDF. Ready to take the next step?';
 
+  narrativeReport: string = '';
+
   // Declaring all the properties with default values:
 
   // results: any = null — stores the full raw response object
@@ -48,6 +51,7 @@ export class Results {
       this.priorityActions = state.results.priority_actions;
       this.antiPriorityWarnings = state.results.anti_priority_warnings;
       this.graduationOutlook = state.results.graduation_outlook;
+      this.narrativeReport = state.results.narrative_report;
 
     }
     this.loadSettings();
@@ -69,6 +73,9 @@ export class Results {
   // The URL hits your PDF download endpoint with the submission id
   // _blank — opens in a new tab instead of replacing the current page
 
+  get parsedNarrative(): string {
+    return marked(this.narrativeReport) as string;
+  }
 
   loadSettings() {
     this.http.get<any[]>('http://localhost:3000/api/settings')
@@ -79,10 +86,10 @@ export class Results {
             if (setting.setting_key === 'cta_button_url') this.ctaButtonUrl = setting.setting_value;
             if (setting.setting_key === 'cta_description') this.ctaDescription = setting.setting_value;
           });
-           this.cdr.detectChanges();
+          this.cdr.detectChanges();
         },
         error: (err) => console.error(err)
       });
-      
+
   }
 }

@@ -1,7 +1,7 @@
 const PDFDocument = require('pdfkit');
 const path = require('path');
 
-const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook) => {
+const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, narrativeReport) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ margin: 50 });
         const buffers = [];
@@ -28,6 +28,18 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         const yellow = '#FBFF12';
         const grey = '#555555';
         const offWhite = '#FAFAFA';
+
+        // Strip markdown formatting for PDF
+        const cleanNarrative = narrativeReport
+            ? narrativeReport
+                .replace(/#{1,6}\s/g, '')        // remove ## headings
+                .replace(/\*\*(.*?)\*\*/g, '$1') // remove **bold**
+                .replace(/\*(.*?)\*/g, '$1')     // remove *italic*
+                .replace(/•/g, '-')              // replace bullets
+                .replace(/---/g, '')  // remove horizontal rules
+                .trim()
+            : 'No report generated.';
+
 
         // ── HEADER ──────────────────────────────────────────
         doc.image(logoPath, 50, 30, { width: 40 });
@@ -83,6 +95,16 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
 
         doc.moveDown(1.5);
 
+        // Narrative Report
+        doc.moveDown(1.5);
+        doc.font(boldFont).fontSize(14).fillColor(pink)
+            .text('Your Personalized Report');
+        doc.moveDown(0.5);
+        doc.font(regularFont).fontSize(11).fillColor(black)
+            .text(cleanNarrative, { lineGap: 4 });
+
+        doc.y = doc.y + 20; // add space after narrative
+
         // ── BUSINESS SYSTEMS NARRATIVE ───────────────────────
         doc.font(boldFont).fontSize(14).fillColor(pink)
             .text('Business Systems Narrative');
@@ -109,7 +131,7 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
             // start at exactly the same spot.
 
             doc.roundedRect(50, yPos, 495, 36, 6)
-                .fillColor(teal)
+                .fillColor(pink)
                 .fill();
             // Draws a teal pill at the captured y position, 495px wide, 36px tall, 6px corner radius.
 
@@ -195,8 +217,8 @@ module.exports = generatePDF;
 
 
 // doc.on('data', (chunk) => { buffers.push(chunk); })
-// PDFKit doesn't build the entire PDF at once. It builds it in small pieces called chunks. Every time it 
-// finishes a piece it fires this data event. You're just saying "every time a chunk is ready, push it into 
+// PDFKit doesn't build the entire PDF at once. It builds it in small pieces called chunks. Every time it
+// finishes a piece it fires this data event. You're just saying "every time a chunk is ready, push it into
 // the buffers array." Think of it like filling a bucket one cup at a time.
 
 

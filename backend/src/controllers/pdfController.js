@@ -31,7 +31,8 @@ exports.downloadPDF = async (req, res) => {
             submission.summary,
             priority_actions,
             anti_priority_warnings,
-            submission.graduation_outlook
+            submission.graduation_outlook,
+            submission.narrative_report
         );
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename="results.pdf"`);

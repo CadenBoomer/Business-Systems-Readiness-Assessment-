@@ -37,25 +37,32 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             system: [
 //                 {
 //                     type: 'text',
-//                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur. 
-            
-//                 Generate a personalized report with exactly these sections:
+//                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur.
 
-//                 1. Personalized Intro - warm, encouraging, 2-3 sentences addressing their current stage directly
-//                 2. Business Systems Narrative - 2 paragraphs explaining their current situation and what changes when the right systems are in place
-//                 3. Recommended Focus Areas - 4-5 bullet points with bold titles and brief descriptions
-//                 4. Graduation Outlook - 2-3 sentences on what becomes possible next
+//                 Generate a personalized assessment report with exactly these four sections. Write in flowing prose with no markdown formatting, no section header symbols, and no bullet point symbols. Use plain text only:
 
-//                 Keep the tone warm, direct and non-judgmental. Do not use jargon. Maximum 500 words total.`,
+//                 Personalized Intro
+//                 Address the user by name. 2-3 warm, encouraging sentences acknowledging where they are and what that means. Normalize their current stage without judgment.
+
+//                 Business Systems Narrative
+//                 Two paragraphs. First paragraph describes the pattern across their answers and the central challenge they are facing. Second paragraph describes what changes when the right systems are in place — make it feel tangible and specific.
+
+//                 Recommended Focus Areas
+//                 5 bullet points. Each one has a bold title followed by a dash and a brief description. No numbering.
+
+//                 Graduation Outlook
+//                 2-3 sentences. Describe what becomes possible when the focus areas are in place. Forward looking and encouraging.
+
+//                 Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
 //                     cache_control: { type: 'ephemeral' }
 //                 }
 //             ],
 //             messages: [
 //                 {
 //                     role: 'user',
-//                     content: `The user has been classified into the ${pathway} pathway.
+//                     content: `The user's name is ${first_name}. They have been classified into the ${pathway} pathway.
 
-//                 ML Reasoning:
+//                 ML Reasoning signals:
 //                 ${reasoning}
 
 //                 Priority Actions:
@@ -80,6 +87,13 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             ]
 //         );
 
+//         // Fetch CTA settings
+//         const [settingsRows] = await pool.query('SELECT * FROM settings');
+//         const settings = {};
+//         settingsRows.forEach(row => {
+//             settings[row.setting_key] = row.setting_value;
+//         });
+
 //         // Fire webhook to GoHighLevel via Zapier/Make
 //         if (process.env.WEBHOOK_URL) {
 //             await axios.post(process.env.WEBHOOK_URL, {
@@ -93,12 +107,6 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             });
 //         }
 
-//         // Fetch CTA settings
-//         const [settingsRows] = await pool.query('SELECT * FROM settings');
-//         const settings = {};
-//         settingsRows.forEach(row => {
-//             settings[row.setting_key] = row.setting_value;
-//         });
 
 //         const pdfBuffer = await generatePDF(
 //             first_name,
@@ -109,7 +117,8 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             summary,
 //             priority_actions,
 //             anti_priority_warnings,
-//             graduation_outlook
+//             graduation_outlook,
+//             narrativeReport
 //         )
 
 //         await sendMail(
@@ -123,6 +132,7 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 //             priority_actions,
 //             anti_priority_warnings,
 //             graduation_outlook,
+//             narrativeReport,
 //             pdfBuffer,
 //             settings
 //         );
@@ -189,26 +199,32 @@ exports.submitAssessment = async (req, res) => {
             system: [
                 {
                     type: 'text',
-                    text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur. 
+                    text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur.
 
-                Generate a personalized report with exactly these sections:
+                Generate a personalized assessment report with exactly these four sections. Write in flowing prose with no markdown formatting, no section header symbols, and no bullet point symbols. Use plain text only:
 
-            1. Personalized Intro - warm, encouraging, 2-3 sentences addressing their current stage directly
-            2. Business Systems Narrative - 2 paragraphs explaining their current situation and what changes when the right systems are in place
-            3. Recommended Focus Areas - 4-5 bullet points with bold titles and brief descriptions
-            4. Graduation Outlook - 2-3 sentences on what becomes possible next
+                Personalized Intro
+                Address the user by name. 2-3 warm, encouraging sentences acknowledging where they are and what that means. Normalize their current stage without judgment.
 
-                Keep the tone warm, direct and non-judgmental. Do not use jargon. Maximum 500 words total.`,
-                    // This tells Claude to cache this system prompt
+                Business Systems Narrative
+                Two paragraphs. First paragraph describes the pattern across their answers and the central challenge they are facing. Second paragraph describes what changes when the right systems are in place — make it feel tangible and specific.
+
+                Recommended Focus Areas
+                5 bullet points. Each one has a bold title followed by a dash and a brief description. No numbering.
+
+                Graduation Outlook
+                2-3 sentences. Describe what becomes possible when the focus areas are in place. Forward looking and encouraging.
+
+                Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
                     cache_control: { type: 'ephemeral' }
                 }
             ],
             messages: [
                 {
                     role: 'user',
-                    content: `The user has been classified into the ${pathway} pathway.
+                    content: `The user's name is ${first_name}. They have been classified into the ${pathway} pathway.
 
-                ML Reasoning:
+                ML Reasoning signals:
                 ${reasoning}
 
                 Priority Actions:
@@ -230,16 +246,30 @@ exports.submitAssessment = async (req, res) => {
             [first_name, last_name, email, JSON.stringify(responses), pathway, reasoning, confidence_score, summary, JSON.stringify(priority_actions), JSON.stringify(anti_priority_warnings), graduation_outlook, narrativeReport]
         );
 
-            // Fetch CTA settings
-            const [settingsRows] = await pool.query('SELECT * FROM settings');
-            const settings = {};
-            settingsRows.forEach(row => {
-                settings[row.setting_key] = row.setting_value;
+        // Fetch CTA settings
+        const [settingsRows] = await pool.query('SELECT * FROM settings');
+        const settings = {};
+        settingsRows.forEach(row => {
+            settings[row.setting_key] = row.setting_value;
+        });
+
+        // Fire webhook to GoHighLevel via Make
+        if (process.env.WEBHOOK_URL) {
+            await axios.post(process.env.WEBHOOK_URL, {
+                first_name,
+                last_name,
+                email,
+                pathway,
+                reasoning,
+                confidence_score,
+                graduation_outlook
             });
+        }
 
-        const pdfBuffer = await generatePDF(first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook);
+        console.log('narrativeReport:', narrativeReport);
+        const pdfBuffer = await generatePDF(first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, narrativeReport);
 
-        await sendMail(email, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer, settings);
+        await sendMail(email, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, narrativeReport, pdfBuffer, settings);
 
         res.status(201).json({
             message: 'Assessment submitted successfully',

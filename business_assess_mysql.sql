@@ -60,3 +60,30 @@ INSERT INTO questions (question_text, display_order) VALUES
 SELECT * FROM questions;
 DELETE FROM questions WHERE id = 2;
 DELETE FROM questions WHERE id = 3;
+
+ALTER TABLE submissions
+ADD COLUMN narrative_report TEXT;
+
+CREATE TABLE settings (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  setting_key VARCHAR(100) NOT NULL UNIQUE,
+  setting_value TEXT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO settings (setting_key, setting_value) VALUES
+('cta_button_text', 'Explore The Website Membership'),
+('cta_button_url', 'https://thewebsitemembership.com'),
+('cta_description', 'Your full results report is attached as a PDF. Ready to take the next step?');
+
+CREATE TABLE pathways (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  pathway_name VARCHAR(100) NOT NULL,
+  description TEXT NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+INSERT INTO pathways (pathway_name, description) VALUES
+('Foundation Systems', 'You are in the early stages of building your business systems. Your focus should be on establishing clear foundations — defining your offer, capturing leads consistently, and setting up basic CRM and follow-up processes. These building blocks will give everything else something stable to grow from.'),
+('Growth', 'You have solid foundations in place and are ready to scale. Your focus should be on standardising delivery, integrating payments, reactivating your existing database, and building consistent review and reporting systems. Growth is about turning what works into repeatable, reliable processes.'),
+('Optimization', 'You have mature systems across your business and are ready to fine-tune performance. Your focus should be on AI-assisted engagement, lifecycle automation, continuous performance improvement, and expanding revenue from existing clients. Optimization is about maximising what you have built.');

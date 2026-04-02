@@ -14,8 +14,9 @@ const transporter = nodemailer.createTransport({
 // are the credentials to log in with." It's like configuring Outlook before you can send emails.
 // This must be later configured to send from Julie's email of choosing, not my own
 
-const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, pdfBuffer, settings = {}) => {
+const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, confidence_score, summary, priority_actions, anti_priority_warnings, graduation_outlook, narrativeReport, pdfBuffer, settings = {}) => {
 
+    
     const ctaButtonText = settings.cta_button_text || 'Explore The Website Membership';
     const ctaButtonUrl = settings.cta_button_url || 'https://thewebsitemembership.com';
     const ctaDescription = settings.cta_description || 'Your full results report is attached as a PDF. Ready to take the next step?';
@@ -24,6 +25,17 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
     // Array.isArray checks if it's already an array — if yes use it directly, if no parse it from string
     const actions = Array.isArray(priority_actions) ? priority_actions : JSON.parse(priority_actions);
     const warnings = Array.isArray(anti_priority_warnings) ? anti_priority_warnings : JSON.parse(anti_priority_warnings);
+
+    const cleanNarrative = narrativeReport
+    ? narrativeReport
+        .replace(/#{1,6}\s/g, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/•/g, '-')
+        .replace(/---/g, '')  // remove horizontal rules
+        .trim()
+    : '';
+
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -72,6 +84,12 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
                 <p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0;">${reasoning}</p>
             </div>
 
+            <!-- Narrative Report -->
+                <div style="padding: 0 32px 24px 32px;">
+                    <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 10px 0;">Your Personalized Report</h2>
+                    <p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0; white-space: pre-wrap;">${cleanNarrative}</p>
+                </div>
+
             <!-- Business Systems Narrative — ML summary paragraph -->
             <div style="padding: 0 32px 24px 32px;">
                 <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 10px 0;">Business Systems Narrative</h2>
@@ -85,7 +103,7 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             <div style="padding: 0 32px 24px 32px;">
                 <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 12px 0;">Recommended Focus Areas</h2>
                 ${actions.map((action, index) => `
-                    <div style="background-color: #41EAD4; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 14px; color: #0C0F0A;">
+                    <div style="background-color: #FF206E; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 14px; color: #0C0F0A;">
                         ${index + 1}. ${action}
                     </div>
                 `).join('')}
