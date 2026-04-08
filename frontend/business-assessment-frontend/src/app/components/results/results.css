@@ -80,12 +80,11 @@
 
 .action-item {
   padding: 14px 20px;
-  /* background-color: var(--primary-teal); */
-  background-color: #ff206e;
+  background-color: var(--primary-pink);
   border-radius: 12px;
   font-size: 15px;
   font-weight: 500;
-  color: var(--black);
+  color: var(--white);
 }
 
 .warning-list {
@@ -121,20 +120,15 @@
   border-top: 1px solid #ddd;
 }
 
-.download-btn {
-  padding: 14px 40px;
-  background-color: var(--black);
-  color: var(--white);
-  border: none;
-  border-radius: 50px;
-  font-family: 'League Spartan', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
+
+.download-link {
+  color: var(--primary-pink);
+  text-decoration: underline;
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  font-weight: 600;
 }
 
-.download-btn:hover {
+.download-link:hover {
   opacity: 0.8;
 }
 
@@ -190,4 +184,29 @@
 .narrative-text strong {
   font-weight: 700;
   color: var(--black);
+}
+
+.status-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--off-white);
+  border-radius: 12px;
+  font-size: 15px;
+  color: #555;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 32, 110, 0.3);
+  border-top-color: var(--primary-pink);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

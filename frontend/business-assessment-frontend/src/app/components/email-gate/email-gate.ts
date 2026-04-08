@@ -76,21 +76,16 @@ export class EmailGate {
     // object.
     //Uses _ to match the backend variables
 
-
-
-    this.http.post<any>('http://localhost:3000/api/submit-assessment', payload)
-      .subscribe({
-        next: (response) => {
-          this.router.navigate(['/results'], {
-            state: { results: response }
-          });
-        },
-        error: (err) => {
-          console.error(err);
-          this.isLoading = false;
-        }
-      });
+    this.router.navigate(['/results'], {
+      state: {
+        streaming: true,
+        payload: payload
+      }
+    });
   }
+
+  // instead of waiting for the API call to finish, it navigates to the results page immediately and 
+  // passes the payload along. The results page handles the actual API call and streaming.
 }
 
 
@@ -105,3 +100,20 @@ export class EmailGate {
 // next — runs when the request succeeds. Takes the response and navigates to /results passing the results 
 // as state
 // error — runs if the request fails. Logs the error and turns off the loading state
+
+
+
+// Old email gate: 
+// this.http.post<any>('http://localhost:3000/api/submit-assessment', payload)
+//     .subscribe({
+//       next: (response) => {
+//         this.router.navigate(['/results'], {
+//           state: { results: response }
+//         });
+//       },
+//       error: (err) => {
+//         console.error(err);
+//         this.isLoading = false;
+//       }
+//     });
+// }

@@ -6,37 +6,42 @@
         <span class="header-title">Business Systems Pathway Assessment Tool</span>
     </header>
 
-
-    <!-- Main Content -->
     <div class="content-wrapper">
         <div class="results-area">
 
-            <!-- Pathway Badge -->
-            <div class="pathway-badge">
-                {{ pathway }}
+            <!-- Status message while streaming -->
+            @if (isStreaming && !pathway) {
+            <div class="status-message">
+                <div class="spinner"></div>
+                <p>{{ statusMessage || 'Analysing your responses...' }}</p>
             </div>
+            }
 
-            <!-- Narrative Report -->
-            @if (narrativeReport) {
+            <!-- Pathway Badge — shows as soon as ML responds -->
+            @if (pathway) {
+            <div class="pathway-badge">{{ pathway }}</div>
+            }
+
+            <!-- Status while Claude generates -->
+            @if (isStreaming && pathway && !isComplete) {
+            <div class="status-message">
+                <div class="spinner"></div>
+                <p>{{ statusMessage || 'Generating your personalized report...' }}</p>
+            </div>
+            }
+
+            <!-- Narrative Report — streams in progressively -->
+            @if (streamingNarrative || narrativeReport) {
             <section class="section">
                 <h2 class="section-title">Your Personalized Report</h2>
                 <div class="narrative-text" [innerHTML]="parsedNarrative"></div>
             </section>
             }
 
-            <!-- Reasoning -->
-            <section class="section">
-                <h2 class="section-title">Your Assessment</h2>
-                <p class="section-text">{{ reasoning }}</p>
-            </section>
+            <!-- Rest of results — show after ML responds -->
+            @if (pathway) {
 
-            <!-- Summary -->
-            <section class="section">
-                <h2 class="section-title">Business Systems Narrative</h2>
-                <p class="section-text">{{ summary }}</p>
-            </section>
-
-            <!-- Priority Actions -->
+            <!-- Recommended Focus Areas — pink pills with white text -->
             <section class="section">
                 <h2 class="section-title">Recommended Focus Areas</h2>
                 <ul class="action-list">
@@ -46,7 +51,7 @@
                 </ul>
             </section>
 
-            <!-- Anti Priority Warnings -->
+            <!-- What to Avoid -->
             <section class="section">
                 <h2 class="section-title">What to Avoid Right Now</h2>
                 <ul class="warning-list">
@@ -62,23 +67,19 @@
                 <p class="section-text">{{ graduationOutlook }}</p>
             </section>
 
-
-            <!-- Confidence Score -->
-            <div class="confidence">
-                <span>Model Confidence: {{ (confidenceScore * 100).toFixed(0) }}%</span>
-                <!-- (confidenceScore * 100).toFixed(0) converts 0.94 to 94% -->
-            </div>
-
-            <!-- Actions -->
+            <!-- CTA — only show when complete -->
+            @if (isComplete) {
             <div class="cta-area">
-                <p class="cta-description">{{ ctaDescription }}</p>
-                <button class="download-btn" (click)="downloadPDF()">
-                    Download My Results
-                </button>
+                <h2 class="section-title">Ready To Take The Next Step?</h2>
+                <p class="cta-description">
+                    <a class="download-link" (click)="downloadPDF()">Download</a> your full results report as a PDF.
+                </p>
                 <a class="cta-btn" [href]="ctaButtonUrl" target="_blank">
                     {{ ctaButtonText }}
                 </a>
             </div>
+            }
+            }
 
         </div>
     </div>
