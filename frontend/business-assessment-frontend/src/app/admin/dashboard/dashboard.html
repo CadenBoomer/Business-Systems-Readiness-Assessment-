@@ -33,12 +33,10 @@
 
             <h2 class="section-title">Questions</h2>
 
-            <!-- Add Question Form -->
-            <div class="form-card">
-                <h3 class="form-title">Add New Question</h3>
-                <input type="text" placeholder="Question text" class="input-field" [(ngModel)]="newQuestion">
-                <input type="number" placeholder="Display order" class="input-field" [(ngModel)]="newDisplayOrder">
-                <button class="add-btn" (click)="addQuestion()">Add Question</button>
+            <!-- Info Notice -->
+            <div class="info-notice">
+                The assessment requires exactly 12 questions with 4 answer options each as required by the ML
+                model. You can edit question and answer text below but you cannot add or delete questions.
             </div>
 
             <!-- Questions List -->
@@ -49,7 +47,6 @@
                 @if (editingQuestion?.id === question.id) {
                 <div class="edit-form">
                     <input type="text" class="input-field" [(ngModel)]="editingQuestion.question_text">
-                    <input type="number" class="input-field" [(ngModel)]="editingQuestion.display_order">
                     <div class="btn-row">
                         <button class="save-btn" (click)="saveQuestion()">Save</button>
                         <button class="cancel-btn" (click)="editingQuestion = null">Cancel</button>
@@ -61,7 +58,6 @@
                     <p class="question-text">{{ question.display_order }}. {{ question.question_text }}</p>
                     <div class="btn-row">
                         <button class="edit-btn" (click)="editQuestion(question)">Edit</button>
-                        <button class="delete-btn" (click)="deleteQuestion(question.id)">Delete</button>
                     </div>
                 </div>
 
@@ -72,28 +68,17 @@
                     @for (option of question.options; track option.id) {
                     <div class="option-row">
                         @if (editingOption?.id === option.id) {
-                        <input type="text" class="input-field" [(ngModel)]="editingOption.option_text">
-                        <input type="number" class="input-field" [(ngModel)]="editingOption.display_order">
+                        <input type="text" class="input-field" [(ngModel)]="editingOption.answer_text">
                         <button class="save-btn" (click)="saveOption()">Save</button>
                         <button class="cancel-btn" (click)="editingOption = null">Cancel</button>
                         } @else {
-                        <span class="option-text">{{ option.display_order }}. {{ option.option_text }}</span>
+                        <span class="option-text">{{ option.display_order }}. {{ option.answer_text }}</span>
                         <div class="btn-row">
                             <button class="edit-btn" (click)="editOption(option)">Edit</button>
-                            <button class="delete-btn" (click)="deleteOption(option.id)">Delete</button>
                         </div>
                         }
                     </div>
                     }
-
-                    <!-- Add Option Form -->
-                    <div class="add-option-form">
-                        <input type="text" placeholder="New option text" class="input-field" [(ngModel)]="newOptionText"
-                            (focus)="selectQuestion(question)">
-                        <input type="number" placeholder="Display order" class="input-field"
-                            [(ngModel)]="newOptionOrder" (focus)="selectQuestion(question)">
-                        <button class="add-btn" (click)="selectQuestion(question); addOption()">Add Option</button>
-                    </div>
                 </div>
                 }
             </div>
@@ -104,7 +89,8 @@
         <!-- Submissions Tab -->
         @if (activeTab === 'submissions') {
         <div class="section">
-            <h2 class="section-title">Submissions</h2>
+            <h2 class="section-title">Submissions <span style="font-size: 14px; color: #888; font-weight: 400;">({{
+                    totalSubmissions }} total)</span></h2>
 
             @for (submission of submissions; track submission.id) {
             <div class="submission-card">
@@ -123,6 +109,22 @@
                 </div>
             </div>
             }
+
+            <!-- Pagination -->
+             <!-- Only shows pagination controls if there's more than one page — no point showing Prev/Next 
+              if everything fits on one page. -->
+            @if (totalPages > 1) {
+            <div class="pagination">
+                <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+                    ← Prev
+                </button>
+                <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+                <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+                    Next →
+                </button>
+            </div>
+            }
+
         </div>
         }
 

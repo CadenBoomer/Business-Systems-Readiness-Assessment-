@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,21 +11,16 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
 
   activeTab: string = 'questions';
   questions: any[] = [];
   submissions: any[] = [];
 
   // Question form
-  newQuestion: string = '';
-  newDisplayOrder: number = 0;
   editingQuestion: any = null;
 
   // Answer option form
-  selectedQuestion: any = null;
-  newOptionText: string = '';
-  newOptionOrder: number = 0;
   editingOption: any = null;
 
   settings: any[] = [];
@@ -33,6 +29,12 @@ export class Dashboard implements OnInit {
   pathways: any[] = [];
   editingPathway: any = null;
 
+  currentPage: number = 1;
+  totalPages: number = 1;
+  totalSubmissions: number = 0;
+
+  private tokenCheckInterval: any;
+
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -40,6 +42,7 @@ export class Dashboard implements OnInit {
     this.loadSubmissions();
     this.loadSettings();
     this.loadPathways();
+    this.startTokenCheck();
   }
 
   // Get JWT token from localStorage
@@ -58,7 +61,10 @@ export class Dashboard implements OnInit {
     this.http.get<any[]>('http://localhost:3000/api/settings',
       { headers: this.getHeaders() })
       .subscribe({
-        next: (data) => this.settings = data,
+        next: (data) => {
+          this.settings = data;
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error(err)
       });
   }
@@ -85,7 +91,10 @@ export class Dashboard implements OnInit {
     this.http.get<any[]>('http://localhost:3000/api/pathways',
       { headers: this.getHeaders() })
       .subscribe({
-        next: (data) => this.pathways = data,
+        next: (data) => {
+          this.pathways = data;
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error(err)
       });
   }
@@ -121,20 +130,7 @@ export class Dashboard implements OnInit {
       });
   }
 
-  addQuestion() {
-    if (!this.newQuestion) return;
-    this.http.post('http://localhost:3000/api/questions',
-      { question_text: this.newQuestion, display_order: this.newDisplayOrder },
-      { headers: this.getHeaders() })
-      .subscribe({
-        next: () => {
-          this.newQuestion = '';
-          this.newDisplayOrder = 0;
-          this.loadQuestions();
-        },
-        error: (err) => console.error(err)
-      });
-  }
+
 
   editQuestion(question: any) {
     this.editingQuestion = { ...question };
@@ -154,36 +150,10 @@ export class Dashboard implements OnInit {
       });
   }
 
-  deleteQuestion(id: number) {
-    if (!confirm('Are you sure you want to delete this question?')) return;
-    this.http.delete(`http://localhost:3000/api/questions/${id}`,
-      { headers: this.getHeaders() })
-      .subscribe({
-        next: () => this.loadQuestions(),
-        error: (err) => console.error(err)
-      });
-  }
+
 
   // ── ANSWER OPTIONS ─────────────────────────────────
 
-  selectQuestion(question: any) {
-    this.selectedQuestion = question;
-  }
-
-  addOption() {
-    if (!this.newOptionText || !this.selectedQuestion) return;
-    this.http.post('http://localhost:3000/api/answer-options',
-      { question_id: this.selectedQuestion.id, option_text: this.newOptionText, display_order: this.newOptionOrder },
-      { headers: this.getHeaders() })
-      .subscribe({
-        next: () => {
-          this.newOptionText = '';
-          this.newOptionOrder = 0;
-          this.loadQuestions();
-        },
-        error: (err) => console.error(err)
-      });
-  }
 
   editOption(option: any) {
     this.editingOption = { ...option };
@@ -191,8 +161,8 @@ export class Dashboard implements OnInit {
 
   saveOption() {
     if (!this.editingOption) return;
-    this.http.put(`http://localhost:3000/api/answer-options/${this.editingOption.id}`,
-      { option_text: this.editingOption.option_text, display_order: this.editingOption.display_order },
+    this.http.put(`http://localhost:3000/api/answers/${this.editingOption.id}`,
+      { answer_text: this.editingOption.answer_text, display_order: this.editingOption.display_order },
       { headers: this.getHeaders() })
       .subscribe({
         next: () => {
@@ -203,23 +173,23 @@ export class Dashboard implements OnInit {
       });
   }
 
-  deleteOption(id: number) {
-    if (!confirm('Are you sure you want to delete this option?')) return;
-    this.http.delete(`http://localhost:3000/api/answer-options/${id}`,
-      { headers: this.getHeaders() })
-      .subscribe({
-        next: () => this.loadQuestions(),
-        error: (err) => console.error(err)
-      });
-  }
 
   // ── SUBMISSIONS ────────────────────────────────────
 
   loadSubmissions() {
-    this.http.get<any[]>('http://localhost:3000/api/submissions',
+    this.http.get<any>(`http://localhost:3000/api/submissions?page=${this.currentPage}`,
+      // Sends the current page number to the backend as a query parameter.
       { headers: this.getHeaders() })
       .subscribe({
-        next: (data) => this.submissions = data,
+        next: (data) => {
+          this.submissions = data.submissions;
+          this.currentPage = data.currentPage;
+          this.totalPages = data.totalPages;
+          this.totalSubmissions = data.total;
+          // The backend now returns an object instead of just an array — so you extract the 
+          // submissions array and the pagination info separately.
+          this.cdr.detectChanges();
+        },
         error: (err) => console.error(err)
       });
   }
@@ -227,5 +197,45 @@ export class Dashboard implements OnInit {
   downloadSubmissionPDF(id: number) {
     window.open(`http://localhost:3000/api/results/${id}/pdf`, '_blank');
   }
+
+
+  startTokenCheck() {
+    // Check every 30 seconds if token is still valid
+    this.tokenCheckInterval = setInterval(() => {
+      const token = localStorage.getItem('admin_token');
+      if (!token) {
+        this.router.navigate(['/admin/login']);
+        return;
+      }
+      try {
+        const decoded: any = jwtDecode(token);
+        const isExpired = decoded.exp * 1000 < Date.now();
+        if (isExpired) {
+          localStorage.removeItem('admin_token');
+          this.router.navigate(['/admin/login']);
+        }
+      } catch {
+        localStorage.removeItem('admin_token');
+        this.router.navigate(['/admin/login']);
+      }
+    }, 30000);
+  }
+
+  ngOnDestroy() {
+    if (this.tokenCheckInterval) {
+      clearInterval(this.tokenCheckInterval);
+    }
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    this.loadSubmissions();
+  }
+
+  // Called when Prev or Next is clicked. The guard if (page < 1 || page > this.totalPages) 
+  // prevents going beyond the first or last page. Then it updates the current page and reloads submissions.
+
+
 
 }

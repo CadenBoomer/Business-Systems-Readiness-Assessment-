@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 // Router — goes in the constructor, it's the service that lets you navigate programmatically in your 
 // TypeScript code:
@@ -14,133 +15,45 @@ import { RouterModule } from '@angular/router';
   templateUrl: './assessment.html',
   styleUrl: './assessment.css',
 })
-export class Assessment {
+export class Assessment implements OnInit {
 
   currentIndex = 0;
   selectedAnswer: string = '';
   answers: { [key: string]: string } = {};
+  isLoading: boolean = true;
+  questions: any[] = [];
 
   //  currentIndex — tracks which question you're on, starts at 0
   // selectedAnswer — stores the currently selected option (A/B/C/D), empty string by default
   // answers: { [key: string]: string } — an object that stores all answered questions. The [key: string] part means any string can be a key. So it builds up like:
 
-  questions = [
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
-    // An array of 12 objects. Each object has:
+  ngOnInit() {
+    this.loadQuestions();
+  }
 
-    // question — the question text string
-    // options — array of 4 objects, each with a label (display text) and value (A/B/C/D)
-    {
-
-      question: 'How clearly defined is your primary offer?',
-      options: [
-        { label: "A. I'm still refining what I sell.", value: 'A' },
-        { label: 'B. I have multiple offers but no clear primary focus.', value: 'B' },
-        { label: 'C. I have one clear primary offer and CTA.', value: 'C' },
-        { label: 'D. I have one primary offer with defined positioning and proof (testimonials/results).', value: 'D' }
-
-      ]
-    },
-    {
-      question: 'What best describes your online presence?',
-      options: [
-        { label: 'A. No structured website.', value: 'A' },
-        { label: 'B. Basic website with limited conversion structure.', value: 'B' },
-        { label: 'C. Structured website with clear conversion path.', value: 'C' },
-        { label: 'D. Website + targeted landing pages aligned to offers.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How are leads captured?',
-      options: [
-        { label: 'A. Manual inquiries (email/DM).', value: 'A' },
-        { label: 'B. Basic contact form or booking link.', value: 'B' },
-        { label: 'C. Form/booking with automated confirmations.', value: 'C' },
-        { label: 'D. Multi-step qualification (forms, conversational AI, funnels).', value: 'D' }
-      ]
-    },
-    {
-      question: 'How structured is your CRM and customer journey?',
-      options: [
-        { label: 'A. Inbox or spreadsheet tracking.', value: 'A' },
-        { label: 'B. CRM exists but inconsistent use.', value: 'B' },
-        { label: 'C. Defined customer journey stages with consistent usage.', value: 'C' },
-        { label: 'D. Lifecycle stages + segmentation + reporting.', value: 'D' }
-      ]
-    },
-    {
-      question: 'What follow-up happens after inquiry?',
-      options: [
-        { label: 'A. Manual replies only.', value: 'A' },
-        { label: 'B. Templates but no automation.', value: 'B' },
-        { label: 'C. Automated confirmations + reminders.', value: 'C' },
-        { label: 'D. Multi-step nurture sequences tied to customer journey stages.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How standardized is client onboarding and fulfillment?',
-      options: [
-        { label: 'A. Varies each time.', value: 'A' },
-        { label: 'B. Manual checklist but inconsistent.', value: 'B' },
-        { label: 'C. Structured onboarding workflow.', value: 'C' },
-        { label: 'D. Automated lifecycle transitions (onboarding → fulfillment → retention).', value: 'D' }
-      ]
-    },
-    {
-      question: 'How are payments and offers handled?',
-      options: [
-        { label: 'A. Manual invoicing only.', value: 'A' },
-        { label: 'B. Online payments but limited automation.', value: 'B' },
-        { label: 'C. Integrated checkout with confirmation workflows.', value: 'C' },
-        { label: 'D. Subscriptions, order bumps, automated payment workflows.', value: 'D' }
-      ]
-    },
-    {
-      question: 'Do you actively monetize your existing database?',
-      options: [
-        { label: 'A. No reactivation efforts.', value: 'A' },
-        { label: 'B. Occasional manual outreach.', value: 'B' },
-        { label: 'C. Structured reactivation campaigns.', value: 'C' },
-        { label: 'D. Automated lifecycle-based reactivation + Outreach AI.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How do you generate and manage reviews?',
-      options: [
-        { label: 'A. No review system.', value: 'A' },
-        { label: 'B. Manual requests occasionally.', value: 'B' },
-        { label: 'C. Structured review request workflow.', value: 'C' },
-        { label: 'D. Automated Reviews AI with follow-up and response workflows.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How are AI tools used in your engagement process?',
-      options: [
-        { label: 'A. No AI tools in use.', value: 'A' },
-        { label: 'B. AI tools installed but not integrated.', value: 'B' },
-        { label: 'C. AI tools integrated into workflows (qualification, reminders).', value: 'C' },
-        { label: 'D. AI voice/conversational agents driving engagement at scale.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How do you track and improve performance?',
-      options: [
-        { label: 'A. I do not consistently track metrics.', value: 'A' },
-        { label: 'B. I check results occasionally but no structured review.', value: 'B' },
-        { label: 'C. I review dashboards regularly and adjust workflows.', value: 'C' },
-        { label: 'D. I track lifecycle performance, attribution, and optimize continuously.', value: 'D' }
-      ]
-    },
-    {
-      question: 'How do you increase revenue from existing clients?',
-      options: [
-        { label: 'A. No structured retention strategy.', value: 'A' },
-        { label: 'B. Occasional manual upsell offers.', value: 'B' },
-        { label: 'C. Planned follow-up offers or renewal reminders.', value: 'C' },
-        { label: 'D. Automated retention, renewal, and expansion workflows.', value: 'D' }
-      ]
-    }
-  ];
+  loadQuestions() {
+    this.http.get<any[]>('http://localhost:3000/api/questions')
+      .subscribe({
+        next: (data) => {
+          this.questions = data.map(q => ({
+            question: q.question_text,
+            options: q.options.map((o: any, index: number) => ({
+              label: o.answer_text,
+              value: ['A', 'B', 'C', 'D'][index]
+            }))
+          }));
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error(err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
 
   get currentQuestion() {
     return this.questions[this.currentIndex];
@@ -150,7 +63,6 @@ export class Assessment {
   // currentQuestion it automatically returns whichever question matches the current index. So when currentIndex
   // is 2 it returns questions[2].
 
-  constructor(private router: Router) { }
 
   selectAnswer(value: string) {
     this.selectedAnswer = value;
@@ -158,6 +70,14 @@ export class Assessment {
 
   // Called when a user clicks an answer button. Just sets selectedAnswer to whatever letter was clicked 
   // (A/B/C/D). The template then uses selectedAnswer to apply the selected CSS class to the right button.
+
+
+  previousQuestion() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      this.selectedAnswer = this.answers['q' + (this.currentIndex + 1)] || '';
+    }
+  }
 
   nextQuestion() {
     this.answers['q' + (this.currentIndex + 1)] = this.selectedAnswer;
@@ -183,12 +103,6 @@ export class Assessment {
     }
   }
 
-  previousQuestion() {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-      this.selectedAnswer = this.answers['q' + (this.currentIndex + 1)] || '';
-    }
-  }
 
 }
 
