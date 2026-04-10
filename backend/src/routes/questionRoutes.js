@@ -4,9 +4,9 @@ const questionController = require('../controllers/questionController')
 const authMiddleware = require('../middleware/authMiddleware')
 
 router.get('/questions', questionController.getQuestions)
-router.post('/questions', authMiddleware, questionController.createQuestion)
+// router.post('/questions', authMiddleware, questionController.createQuestion)
 router.put('/questions/:id', authMiddleware,questionController.updateQuestion)
-router.delete('/questions/:id', authMiddleware, questionController.deleteQuestion)
+// router.delete('/questions/:id', authMiddleware, questionController.deleteQuestion)
 
 
 module.exports = router;

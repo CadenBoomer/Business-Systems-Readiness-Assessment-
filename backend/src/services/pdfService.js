@@ -30,6 +30,10 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
                 .replace(/\*(.*?)\*/g, '$1')
                 .replace(/•/g, '-')
                 .replace(/---/g, '')
+                .replace(/^Personalized Intro\s*/gm, '')
+                .replace(/^Business Systems Narrative\s*/gm, '')
+                .replace(/^Recommended Focus Areas\s*/gm, '')
+                .replace(/^Graduation Outlook\s*/gm, '')
                 .trim()
             : 'No report generated.';
 
@@ -73,16 +77,24 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         actions.forEach((action) => {
             const yPos = doc.y;
             const textHeight = doc.heightOfString(action, { width: 475 });
-            const pillHeight = Math.max(36, textHeight + 16);
+            const pillHeight = Math.max(36, textHeight + 24);
 
-            doc.roundedRect(50, yPos, 495, pillHeight, 6)
+            // Add new page if not enough space
+            if (yPos + pillHeight > doc.page.height - 80) {
+                doc.addPage();
+                doc.y = 50;
+            }
+
+            const currentY = doc.y;
+
+            doc.roundedRect(50, currentY, 495, pillHeight, 6)
                 .fillColor(pink)
                 .fill();
 
             doc.font(regularFont).fontSize(11).fillColor(white)
-                .text(action, 60, yPos + 10, { width: 475 });
+                .text(action, 60, currentY + 10, { width: 475 });
 
-            doc.y = yPos + pillHeight + 10;
+            doc.y = currentY + pillHeight + 10;
         });
 
         doc.moveDown(2);
@@ -97,16 +109,24 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         warnings.forEach((warning) => {
             const yPos = doc.y;
             const textHeight = doc.heightOfString(warning, { width: 475 });
-            const pillHeight = Math.max(36, textHeight + 16);
+            const pillHeight = Math.max(36, textHeight + 24);
 
-            doc.roundedRect(50, yPos, 495, pillHeight, 6)
+            // Add new page if not enough space
+            if (yPos + pillHeight > doc.page.height - 80) {
+                doc.addPage();
+                doc.y = 50;
+            }
+
+            const currentY = doc.y;
+
+            doc.roundedRect(50, currentY, 495, pillHeight, 6)
                 .fillColor(yellow)
                 .fill();
 
             doc.font(regularFont).fontSize(11).fillColor(black)
-                .text(warning, 60, yPos + 10, { width: 475 });
+                .text(warning, 60, currentY + 10, { width: 475 });
 
-            doc.y = yPos + pillHeight + 10;
+            doc.y = currentY + pillHeight + 10;
         });
 
         doc.moveDown(2);

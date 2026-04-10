@@ -97,3 +97,39 @@
 .login-btn:hover:not(:disabled) {
   opacity: 0.85;
 }
+
+/* For phones */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .content-wrapper {
+    padding: 32px 16px;
+    align-items: flex-start;
+  }
+
+  .login-heading {
+    font-size: 22px;
+  }
+
+  .input-field {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .login-btn {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 32px;
+  }
+}

@@ -328,3 +328,79 @@ input[type="number"] {
   font-size: 14px;
   color: #555;
 }
+
+
+/* For phones */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header-title {
+    font-size: 14px;
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  .logout-btn {
+    padding: 6px 14px;
+    font-size: 13px;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab-btn {
+    padding: 12px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .content-wrapper {
+    padding: 24px 16px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .question-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .submission-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .submission-right {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .btn-row {
+    flex-wrap: wrap;
+  }
+
+  .option-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pagination {
+    gap: 8px;
+  }
+
+  .page-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}

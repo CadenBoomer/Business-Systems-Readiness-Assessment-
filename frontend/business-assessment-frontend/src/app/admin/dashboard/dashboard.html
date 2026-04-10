@@ -22,6 +22,9 @@
         <button class="tab-btn" [class.active]="activeTab === 'pathways'" (click)="activeTab = 'pathways'">
             Pathways
         </button>
+        <button class="tab-btn" [class.active]="activeTab === 'account'" (click)="activeTab = 'account'">
+            Account
+        </button>
     </div>
 
     <!-- Main Content -->
@@ -111,7 +114,7 @@
             }
 
             <!-- Pagination -->
-             <!-- Only shows pagination controls if there's more than one page — no point showing Prev/Next 
+            <!-- Only shows pagination controls if there's more than one page — no point showing Prev/Next 
               if everything fits on one page. -->
             @if (totalPages > 1) {
             <div class="pagination">
@@ -191,6 +194,43 @@
                 </div>
             </div>
             }
+        </div>
+
+        }
+
+        <!-- Account Tab -->
+        @if (activeTab === 'account') {
+        <div class="section">
+            <h2 class="section-title">Change Credentials</h2>
+
+            <div class="question-card">
+                <div class="edit-form">
+
+                    @if (credentialsMessage) {
+                    <p style="color: #41EAD4; font-size: 14px; margin: 0;">{{ credentialsMessage }}</p>
+                    }
+
+                    @if (credentialsError) {
+                    <p style="color: #FF206E; font-size: 14px; margin: 0;">{{ credentialsError }}</p>
+                    }
+
+                    <label style="font-size: 13px; color: #555;">Current Password (required)</label>
+                    <input type="password" class="input-field" placeholder="Enter current password"
+                        [(ngModel)]="currentPassword">
+
+                    <label style="font-size: 13px; color: #555;">New Username (leave blank to keep current)</label>
+                    <input type="text" class="input-field" placeholder="New username" [(ngModel)]="newUsername">
+
+                    <label style="font-size: 13px; color: #555;">New Password (leave blank to keep current)</label>
+                    <input type="password" class="input-field" placeholder="New password" [(ngModel)]="newPassword">
+
+                    <label style="font-size: 13px; color: #555;">Confirm New Password</label>
+                    <input type="password" class="input-field" placeholder="Confirm new password"
+                        [(ngModel)]="confirmPassword">
+
+                    <button class="save-btn" (click)="updateCredentials()">Update Credentials</button>
+                </div>
+            </div>
         </div>
         }
     </div>

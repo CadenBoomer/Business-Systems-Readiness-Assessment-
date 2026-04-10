@@ -17,8 +17,8 @@ exports.submitAssessment = async (req, res) => {
 
     try {
         // Call real ML API
-    // Sends the user's name and answers to Abhay's ML API. await waits for the response before continuing. 
-    // The URL comes from .env so it's easy to change without touching code.
+        // Sends the user's name and answers to Abhay's ML API. await waits for the response before continuing. 
+        // The URL comes from .env so it's easy to change without touching code.
         const mlResponse = await axios.post(`${process.env.ML_API_URL}/predict`, {
             first_name,
             responses
@@ -47,9 +47,9 @@ exports.submitAssessment = async (req, res) => {
 
 
         // Generate narrative report using Claude
-    // Sends the ML results to Claude to generate a personalized narrative. max_tokens: 600 limits the response 
-    // length which keeps it faster.
-    //  The system prompt is cached with cache_control: ephemeral so subsequent requests reuse it.
+        // Sends the ML results to Claude to generate a personalized narrative. max_tokens: 600 limits the response 
+        // length which keeps it faster.
+        //  The system prompt is cached with cache_control: ephemeral so subsequent requests reuse it.
         const claudeResponse = await client.messages.create({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 600,
@@ -58,19 +58,13 @@ exports.submitAssessment = async (req, res) => {
                     type: 'text',
                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur.
 
-                Generate a personalized assessment report with exactly these four sections. Write in flowing prose with no markdown formatting, no section header symbols, and no bullet point symbols. Use plain text only:
+                Generate a personalized report as flowing prose with no section headers, no labels, no markdown formatting, no bullet point symbols. Use plain text only.
 
-                Personalized Intro
-                Address the user by name. 2-3 warm, encouraging sentences acknowledging where they are and what that means. Normalize their current stage without judgment.
-
-                Business Systems Narrative
-                Two paragraphs. First paragraph describes the pattern across their answers and the central challenge they are facing. Second paragraph describes what changes when the right systems are in place — make it feel tangible and specific.
-
-                Recommended Focus Areas
-                5 bullet points. Each one has a bold title followed by a dash and a brief description. No numbering.
-
-                Graduation Outlook
-                2-3 sentences. Describe what becomes possible when the focus areas are in place. Forward looking and encouraging.
+                The report should have four natural parts that flow together without titles:
+                - A warm personalized intro addressing the user by name
+                - Two paragraphs describing their current situation and what changes when systems are in place
+                - 5 focus areas as bullet points (use • symbol) with a bold title and brief description
+                - A forward looking graduation outlook
 
                 Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
                     cache_control: { type: 'ephemeral' }
@@ -271,19 +265,13 @@ exports.submitAssessmentStream = async (req, res) => {
                     type: 'text',
                     text: `You are generating a Business Systems Readiness Assessment report for a service-based entrepreneur.
 
-                Generate a personalized assessment report with exactly these four sections. Write in flowing prose with no markdown formatting, no section header symbols, and no bullet point symbols. Use plain text only:
+                Generate a personalized report as flowing prose with no section headers, no labels, no markdown formatting, no bullet point symbols. Use plain text only.
 
-                Personalized Intro
-                Address the user by name. 2-3 warm, encouraging sentences acknowledging where they are and what that means. Normalize their current stage without judgment.
-
-                Business Systems Narrative
-                Two paragraphs. First paragraph describes the pattern across their answers and the central challenge they are facing. Second paragraph describes what changes when the right systems are in place — make it feel tangible and specific.
-
-                Recommended Focus Areas
-                5 bullet points. Each one has a bold title followed by a dash and a brief description. No numbering.
-
-                Graduation Outlook
-                2-3 sentences. Describe what becomes possible when the focus areas are in place. Forward looking and encouraging.
+                The report should have four natural parts that flow together without titles:
+                - A warm personalized intro addressing the user by name
+                - Two paragraphs describing their current situation and what changes when systems are in place
+                - 5 focus areas as bullet points (use • symbol) with a bold title and brief description
+                - A forward looking graduation outlook
 
                 Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
                     cache_control: { type: 'ephemeral' }

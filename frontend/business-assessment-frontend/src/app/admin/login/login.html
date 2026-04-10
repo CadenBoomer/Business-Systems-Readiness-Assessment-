@@ -18,8 +18,8 @@
                 <input type="password" placeholder="Password" class="input-field" [(ngModel)]="password">
             </div>
 
-            @if (error) {
-            <p class="error-msg">{{ error }}</p>
+            @if (errorMessage) {
+            <p style="color: #FF206E; font-size: 14px; margin: 8px 0 0 0;">{{ errorMessage }}</p>
             }
 
             <button class="login-btn" [disabled]="isLoading" (click)="login()">

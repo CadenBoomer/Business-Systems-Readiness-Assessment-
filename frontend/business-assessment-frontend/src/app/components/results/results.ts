@@ -44,13 +44,15 @@ export class Results implements OnInit, OnDestroy {
   isComplete: boolean = false;
   private eventSource: EventSource | null = null;
 
+  hasError: boolean = false;
+
   // isStreaming — true while data is still coming in, used to show spinner
   // streamingNarrative — builds up word by word as Claude sends chunks
   // statusMessage — shows messages like "Analysing your responses..."
   // isComplete — true when everything is done, used to show download button
   // eventSource — kept for cleanup in ngOnDestroy even though we use fetch
 
-  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(public router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     const state = history.state;
@@ -62,12 +64,11 @@ export class Results implements OnInit, OnDestroy {
       // old flow
       this.loadFromResults(state.results);
     } else {
-      // Check sessionStorage on refresh
-      const saved = sessionStorage.getItem('results');
-      if (saved) {
-        this.loadFromResults(JSON.parse(saved));
-        this.isComplete = true;
-      }
+      const hadError = sessionStorage.getItem('hasError');
+      if (hadError) {
+        this.hasError = true;
+        
+      } 
     }
 
     this.loadSettings();
@@ -94,10 +95,14 @@ export class Results implements OnInit, OnDestroy {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     }).then(response => {
+      if (!response.ok) {
+        this.showError();
+        return;
+      }
       // reader — reads the response body chunk by chunk
       // decoder — converts raw bytes into text
       // buffer — holds incomplete lines between chunks since SSE events can split across chunks
-      console.log('stream response status:', response.status);
+
       const reader = response.body!.getReader();
       const decoder = new TextDecoder();
       let buffer = '';
@@ -122,13 +127,13 @@ export class Results implements OnInit, OnDestroy {
             if (line.startsWith('event:')) {
               // handled with next data line
             } else if (line.startsWith('data:')) {
-              console.log('raw line:', line);
+
               try {
                 const data = JSON.parse(line.slice(5).trim());
                 this.handleStreamEvent(data);
               } catch (e) {
                 // skip malformed
-                console.log('parse error:', e)
+
               }
             }
           }
@@ -139,7 +144,7 @@ export class Results implements OnInit, OnDestroy {
 
       read();
     }).catch(err => {
-      console.error('Stream error:', err);
+      this.showError();
       this.isStreaming = false;
       this.cdr.detectChanges();
     });
@@ -147,7 +152,6 @@ export class Results implements OnInit, OnDestroy {
 
   // processing each event
   handleStreamEvent(data: any) {
-    console.log('event received:', data);
 
     if (data.submission_id) {
       // Complete event — check this FIRST
@@ -181,6 +185,9 @@ export class Results implements OnInit, OnDestroy {
     } else if (data.text) {
       // Narrative chunk event
       this.streamingNarrative += data.text;
+    } else if (data.error) {
+      // Error event from backend
+      this.showError();
     }
 
     this.cdr.detectChanges();
@@ -194,7 +201,6 @@ export class Results implements OnInit, OnDestroy {
   }
 
   downloadPDF() {
-    console.log('submissionId when downloading:', this.submissionId);
     window.open(`http://localhost:3000/api/results/${this.submissionId}/pdf`, '_blank');
 
   }
@@ -211,7 +217,6 @@ export class Results implements OnInit, OnDestroy {
           });
           this.cdr.detectChanges();
         },
-        error: (err) => console.error(err)
       });
   }
 
@@ -220,6 +225,19 @@ export class Results implements OnInit, OnDestroy {
     if (this.eventSource) {
       this.eventSource.close();
     }
+  }
+
+  showError() {
+    this.hasError = true;
+    this.isStreaming = false;
+    this.isComplete = false;
+    this.cdr.detectChanges();
+  }
+
+  retry() {
+    this.router.navigate(['/email-gate'], {
+      state: { responses: {} }
+    });
   }
 
 }

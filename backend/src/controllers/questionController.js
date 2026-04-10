@@ -21,25 +21,6 @@ exports.getQuestions = async (req, res) => {
     }
 };
 
-//Create a new question
-exports.createQuestion = async (req, res) => {
-     const { question_text, display_order } = req.body;
-    try{
-        const [result] = await pool.query('INSERT INTO questions (question_text, display_order) VALUES (?, ?)',
-            [question_text, display_order]
-        );
-        res.status(201).json({
-            message: 'Question created successfully',
-            id: result.insertId
-        });
-
-    } catch(error){
-        console.log(error);
-        res.status(500).json({error: 'Internal server error'});
-    
-    }
-};
-
 
 //Update/Edit a question
 exports.updateQuestion = async (req, res) => {
@@ -60,20 +41,20 @@ exports.updateQuestion = async (req, res) => {
 };
 
 //Delete a question
-exports.deleteQuestion = async (req, res) => {
-    const id = req.params.id;
-    try{
-        await pool.query('DELETE FROM questions WHERE id = ?',
-            [id]
-        );
-        res.status(200).json({
-            message: 'Question deleted successfully'
-        });
-        } catch(error){
-            console.log(error);
-            res.status(500).json({error: 'Internal server error'});
-    }
-};
+// exports.deleteQuestion = async (req, res) => {
+//     const id = req.params.id;
+//     try{
+//         await pool.query('DELETE FROM questions WHERE id = ?',
+//             [id]
+//         );
+//         res.status(200).json({
+//             message: 'Question deleted successfully'
+//         });
+//         } catch(error){
+//             console.log(error);
+//             res.status(500).json({error: 'Internal server error'});
+//     }
+// };
 
 
 
@@ -89,3 +70,22 @@ exports.deleteQuestion = async (req, res) => {
 //       { "id": 2, "option_text": "10 to 50" }
 //     ]
 //   }
+
+//Create a new question
+// exports.createQuestion = async (req, res) => {
+//      const { question_text, display_order } = req.body;
+//     try{
+//         const [result] = await pool.query('INSERT INTO questions (question_text, display_order) VALUES (?, ?)',
+//             [question_text, display_order]
+//         );
+//         res.status(201).json({
+//             message: 'Question created successfully',
+//             id: result.insertId
+//         });
+
+//     } catch(error){
+//         console.log(error);
+//         res.status(500).json({error: 'Internal server error'});
+    
+//     }
+// };

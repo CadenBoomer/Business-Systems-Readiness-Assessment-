@@ -24,6 +24,10 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             .replace(/\*(.*?)\*/g, '$1')
             .replace(/•/g, '-')
             .replace(/---/g, '')
+            .replace(/^Personalized Intro\s*/gm, '')
+            .replace(/^Business Systems Narrative\s*/gm, '')
+            .replace(/^Recommended Focus Areas\s*/gm, '')
+            .replace(/^Graduation Outlook\s*/gm, '')
             .trim()
         : '';
 

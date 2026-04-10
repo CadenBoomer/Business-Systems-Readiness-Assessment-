@@ -9,13 +9,22 @@
     <div class="content-wrapper">
         <div class="results-area">
 
+            @if (hasError) {
+            <div class="error-message">
+                <p>Something went wrong while processing your assessment. Please go back and try again.</p>
+                <button class="retry-btn" (click)="retry()">Try Again</button>
+            </div>
+            }
+
             <!-- Status message while streaming -->
             @if (isStreaming && !pathway) {
             <div class="status-message">
                 <div class="spinner"></div>
                 <p>{{ statusMessage || 'Analysing your responses...' }}</p>
             </div>
+
             }
+
 
             <!-- Pathway Badge — shows as soon as ML responds -->
             @if (pathway) {

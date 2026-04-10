@@ -33,6 +33,13 @@ export class Dashboard implements OnInit, OnDestroy {
   totalPages: number = 1;
   totalSubmissions: number = 0;
 
+  currentPassword: string = '';
+  newUsername: string = '';
+  newPassword: string = '';
+  confirmPassword: string = '';
+  credentialsMessage: string = '';
+  credentialsError: string = '';
+
   private tokenCheckInterval: any;
 
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
@@ -236,6 +243,40 @@ export class Dashboard implements OnInit, OnDestroy {
   // Called when Prev or Next is clicked. The guard if (page < 1 || page > this.totalPages) 
   // prevents going beyond the first or last page. Then it updates the current page and reloads submissions.
 
+  updateCredentials() {
+    if (this.newPassword && this.newPassword !== this.confirmPassword) {
+      this.credentialsError = 'New passwords do not match';
+      return;
+    }
 
+    if (!this.currentPassword) {
+      this.credentialsError = 'Current password is required';
+      return;
+    }
+
+    this.http.put('http://localhost:3000/api/admin/credentials',
+      {
+        current_password: this.currentPassword,
+        new_username: this.newUsername || undefined,
+        new_password: this.newPassword || undefined
+      },
+      { headers: this.getHeaders() })
+      .subscribe({
+        next: () => {
+          this.credentialsMessage = 'Credentials updated successfully';
+          this.credentialsError = '';
+          this.currentPassword = '';
+          this.newUsername = '';
+          this.newPassword = '';
+          this.confirmPassword = '';
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.credentialsError = err.error?.error || 'Something went wrong';
+          this.credentialsMessage = '';
+          this.cdr.detectChanges();
+        }
+      });
+  }
 
 }

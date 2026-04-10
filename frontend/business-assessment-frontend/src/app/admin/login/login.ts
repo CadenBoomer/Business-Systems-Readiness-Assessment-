@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-login',
@@ -15,25 +16,22 @@ export class LoginComponent {
   password: string = '';
   error: string = '';
   isLoading: boolean = false;
+  errorMessage: string = '';
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   login() {
-    if (!this.username || !this.password) return;
-    this.isLoading = true;
-    this.error = '';
-
     this.http.post<any>('http://localhost:3000/api/admin/login', {
       username: this.username,
       password: this.password
     }).subscribe({
-      next: (response) => {
-        localStorage.setItem('admin_token', response.token);
+      next: (res) => {
+        localStorage.setItem('admin_token', res.token);
         this.router.navigate(['/admin/dashboard']);
       },
-      error: (err) => {
-        this.error = 'Invalid username or password';
-        this.isLoading = false;
+      error: () => {
+        this.errorMessage = 'Invalid username or password';
+        this.cdr.detectChanges();
       }
     });
   }

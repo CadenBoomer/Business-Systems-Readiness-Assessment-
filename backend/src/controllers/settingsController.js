@@ -12,7 +12,7 @@ exports.getSettings = async (req, res) => {
 
 exports.updateSetting = async (req, res) => {
     const { setting_key, setting_value } = req.body;
-    console.log('updating setting:', setting_key, setting_value);
+    // console.log('updating setting:', setting_key, setting_value);
     try {
         await pool.query(
             'UPDATE settings SET setting_value = ? WHERE setting_key = ?',
