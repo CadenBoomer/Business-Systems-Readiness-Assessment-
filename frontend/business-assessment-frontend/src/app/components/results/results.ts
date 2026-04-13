@@ -2,7 +2,6 @@ import { Component, ChangeDetectorRef, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { marked } from 'marked';
 
 @Component({
   selector: 'app-results',
@@ -67,8 +66,8 @@ export class Results implements OnInit, OnDestroy {
       const hadError = sessionStorage.getItem('hasError');
       if (hadError) {
         this.hasError = true;
-        
-      } 
+
+      }
     }
 
     this.loadSettings();
@@ -195,10 +194,29 @@ export class Results implements OnInit, OnDestroy {
 
   // Uses whichever is available — streamingNarrative during streaming, 
   // narrativeReport for the old flow. Converts markdown to HTML using marked.
-  get parsedNarrative(): string {
+
+  get narrativeProse(): string {
     const text = this.streamingNarrative || this.narrativeReport;
-    return marked(text) as string;
+    if (!text) return '';
+    // Get everything before the first bullet point
+    const bulletIndex = text.indexOf('•');
+    if (bulletIndex === -1) return text;
+    return text.substring(0, bulletIndex).trim();
   }
+
+  get narrativeBullets(): string[] {
+    const text = this.streamingNarrative || this.narrativeReport;
+    if (!text) return [];
+    // Extract bullet points
+    const bulletIndex = text.indexOf('•');
+    if (bulletIndex === -1) return [];
+    const bulletSection = text.substring(bulletIndex);
+    return bulletSection
+      .split('\n')
+      .filter(line => line.trim().startsWith('•'))
+      .map(line => line.replace('•', '').trim());
+  }
+
 
   downloadPDF() {
     window.open(`http://localhost:3000/api/results/${this.submissionId}/pdf`, '_blank');
@@ -238,6 +256,10 @@ export class Results implements OnInit, OnDestroy {
     this.router.navigate(['/email-gate'], {
       state: { responses: {} }
     });
+  }
+
+  get hasNarrative(): boolean {
+    return !!(this.streamingNarrative || this.narrativeReport);
   }
 
 }

@@ -95,7 +95,14 @@
             <h2 class="section-title">Submissions <span style="font-size: 14px; color: #888; font-weight: 400;">({{
                     totalSubmissions }} total)</span></h2>
 
-            @for (submission of submissions; track submission.id) {
+            <!-- Search -->
+            <div style="position: relative; margin-bottom: 20px;">
+                <span
+                    style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px;">🔍</span>
+                <input type="text" class="input-field" placeholder="Search by name or email..."
+                    [(ngModel)]="searchQuery" style="padding-left: 42px;",>
+            </div>
+            @for (submission of filteredSubmissions; track submission.id) {
             <div class="submission-card">
                 <div class="submission-header">
                     <div>

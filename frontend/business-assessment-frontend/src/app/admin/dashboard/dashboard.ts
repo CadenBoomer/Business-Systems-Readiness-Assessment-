@@ -40,6 +40,8 @@ export class Dashboard implements OnInit, OnDestroy {
   credentialsMessage: string = '';
   credentialsError: string = '';
 
+  searchQuery: string = '';
+
   private tokenCheckInterval: any;
 
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
@@ -278,5 +280,15 @@ export class Dashboard implements OnInit, OnDestroy {
         }
       });
   }
+
+  get filteredSubmissions() {
+  if (!this.searchQuery) return this.submissions;
+  const query = this.searchQuery.toLowerCase();
+  return this.submissions.filter(s =>
+    s.first_name.toLowerCase().includes(query) ||
+    s.last_name.toLowerCase().includes(query) ||
+    s.email.toLowerCase().includes(query)
+  );
+}
 
 }

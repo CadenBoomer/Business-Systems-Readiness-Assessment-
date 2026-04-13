@@ -97,7 +97,7 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             <div style="border-top: 1px solid #ddd; margin: 0 32px;"></div>
 
             <!-- CTA Section -->
-            <div style="padding: 24px 32px;">
+            <div style="padding: 40px 32px;">
                 <h2 style="font-size: 18px; font-weight: 700; color: #0C0F0A; margin: 0 0 12px 0;">Ready To Take The Next Step?</h2>
                 <p style="font-size: 14px; color: #555555; margin: 0 0 16px 0;">
                     Download your full results report as a PDF — it's attached to this email.
@@ -129,4 +129,56 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
     await transporter.sendMail(mailOptions);
 };
 
-module.exports = sendMail;
+const sendNotification = async (toEmail, first_name, last_name, email, pathway, pdfBuffer) => {
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: toEmail,
+        subject: `New Assessment Submission — ${first_name} ${last_name}`,
+        html: `
+        <div style="font-family: Arial, sans-serif; max-width: 650px; margin: 0 auto; background-color: #FAFAFA; border: 1px solid #ddd;">
+            
+            <div style="background-color: #0C0F0A; padding: 20px 32px;">
+                <span style="color: #FFFFFF; font-size: 18px; font-weight: 700;">
+                    New Assessment Submission
+                </span>
+            </div>
+
+            <div style="padding: 32px;">
+                <p style="font-size: 16px; color: #0C0F0A; margin: 0 0 16px 0;">
+                    A new assessment has been completed.
+                </p>
+                <p style="font-size: 15px; color: #333; margin: 0 0 8px 0;">
+                    <strong>Name:</strong> ${first_name} ${last_name}
+                </p>
+                <p style="font-size: 15px; color: #333; margin: 0 0 8px 0;">
+                    <strong>Email:</strong> ${email}
+                </p>
+                <p style="font-size: 15px; color: #333; margin: 0 0 8px 0;">
+                    <strong>Pathway:</strong> ${pathway}
+                </p>
+                <p style="font-size: 14px; color: #555; margin: 16px 0 0 0;">
+                    The full results PDF is attached.
+                </p>
+            </div>
+
+            <div style="background-color: #0C0F0A; padding: 16px 32px; text-align: center;">
+                <p style="color: #888888; font-size: 12px; margin: 0;">
+                    The Website Membership — Business Systems Pathway Assessment
+                </p>
+            </div>
+
+        </div>
+        `,
+        attachments: [
+            {
+                filename: `${first_name}_${last_name}_Assessment.pdf`,
+                content: pdfBuffer,
+                contentType: 'application/pdf'
+            }
+        ]
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
+module.exports = { sendMail, sendNotification };

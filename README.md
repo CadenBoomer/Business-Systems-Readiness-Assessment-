@@ -197,7 +197,7 @@ node server.js
 **Terminal 2 — Frontend:**
 ```bash
 cd frontend
-ng serve
+ng serve or ng serve -o
 ```
 
 Open `http://localhost:4200` in your browser.
@@ -249,7 +249,7 @@ The assessment uses Server-Sent Events (SSE) for real-time streaming:
 ### Admin Panel
 Located at `/admin/login`. Five tabs:
 - **Questions** — edit question and answer wording (edit only — ML requires exactly 12 questions with 4 options each)
-- **Submissions** — view all submissions with pagination, download PDFs
+- **Submissions** — view all submissions with pagination and search by name/email, download PDFs
 - **Settings** — edit CTA button text, URL and description
 - **Pathways** — edit pathway descriptions
 - **Account** — change admin username and password
