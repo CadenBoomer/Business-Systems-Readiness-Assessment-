@@ -94,7 +94,7 @@ export class EmailGate {
 
 // this.http.post<any> — makes a POST request to your backend. <any> means you're not strictly typing the 
 // response
-// The URL http://localhost:3000/api/submit-assessment is your backend endpoint
+// The URL https://assessment.thewebsitemembership.com/api/submit-assessment is your backend endpoint
 // .subscribe() — HttpClient returns an Observable, not a Promise. You have to subscribe to it to actually 
 // trigger the request and handle the response. Think of it like .then() on a Promise but Angular's version
 // next — runs when the request succeeds. Takes the response and navigates to /results passing the results 
@@ -104,7 +104,7 @@ export class EmailGate {
 
 
 // Old email gate: 
-// this.http.post<any>('http://localhost:3000/api/submit-assessment', payload)
+// this.http.post<any>('https://assessment.thewebsitemembership.com/api/submit-assessment', payload)
 //     .subscribe({
 //       next: (response) => {
 //         this.router.navigate(['/results'], {

@@ -34,7 +34,7 @@ export class Assessment implements OnInit {
   }
 
   loadQuestions() {
-    this.http.get<any[]>('http://localhost:3000/api/questions')
+    this.http.get<any[]>('https://assessment.thewebsitemembership.com/api/questions')
       .subscribe({
         next: (data) => {
           this.questions = data.map(q => ({
