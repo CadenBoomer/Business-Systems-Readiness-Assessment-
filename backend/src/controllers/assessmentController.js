@@ -128,17 +128,17 @@ exports.submitAssessment = async (req, res) => {
         });
 
         // Fire webhook to GoHighLevel via Make
-        // if (process.env.WEBHOOK_URL) {
-        //     await axios.post(process.env.WEBHOOK_URL, {
-        //         first_name,
-        //         last_name,
-        //         email,
-        //         pathway,
-        //         reasoning,
-        //         confidence_score,
-        //         graduation_outlook
-        //     });
-        // }
+        if (process.env.WEBHOOK_URL) {
+            await axios.post(process.env.WEBHOOK_URL, {
+                first_name,
+                last_name,
+                email,
+                pathway,
+                reasoning,
+                confidence_score,
+                graduation_outlook
+            });
+        }
 
         const pdfBuffer = await generatePDF(
             first_name,
@@ -352,6 +352,19 @@ exports.submitAssessmentStream = async (req, res) => {
         settingsRows.forEach(row => {
             settings[row.setting_key] = row.setting_value;
         });
+
+        // Fire webhook to GoHighLevel via Make
+        if (process.env.WEBHOOK_URL) {
+            axios.post(process.env.WEBHOOK_URL, {
+                first_name,
+                last_name,
+                email,
+                pathway,
+                reasoning,
+                confidence_score,
+                graduation_outlook
+            });
+        }
 
         // Send PDF and email in background
         // Notice there's no await here. This fires and forgets — PDF and email generate in the 
