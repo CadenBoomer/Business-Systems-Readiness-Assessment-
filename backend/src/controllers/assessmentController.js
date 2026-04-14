@@ -66,6 +66,8 @@ exports.submitAssessment = async (req, res) => {
                 - 5 focus areas as bullet points (use • symbol) with a bold title and brief description
                 - A forward looking graduation outlook
 
+                Do not include any introductory line before the bullet points such as "Your focus areas are:" or "Here are your recommendations:" or similar — start the bullet points directly with •
+
                 Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
                     cache_control: { type: 'ephemeral' }
                 }
@@ -282,6 +284,8 @@ exports.submitAssessmentStream = async (req, res) => {
                 - Two paragraphs describing their current situation and what changes when systems are in place
                 - 5 focus areas as bullet points (use • symbol) with a bold title and brief description
                 - A forward looking graduation outlook
+
+                Do not include any introductory line before the bullet points such as "Your focus areas are:" or "Here are your recommendations:" or similar — start the bullet points directly with •
 
                 Keep the tone warm, direct and non-judgmental. No jargon. Maximum 500 words total. Do not use any markdown symbols like #, ##, **, *, or ---`,
                     cache_control: { type: 'ephemeral' }

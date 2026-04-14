@@ -28,7 +28,7 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
                 .replace(/#{1,6}\s/g, '')
                 .replace(/\*\*(.*?)\*\*/g, '$1')
                 .replace(/\*(.*?)\*/g, '$1')
-                .replace(/•/g, '-')
+                // .replace(/•/g, '-')
                 .replace(/---/g, '')
                 .replace(/^Personalized Intro\s*/gm, '')
                 .replace(/^Business Systems Narrative\s*/gm, '')
@@ -58,28 +58,29 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         doc.moveTo(50, 165).lineTo(545, 165).strokeColor('#dddddd').lineWidth(1).stroke();
         doc.moveDown(2);
 
-        // ── YOUR PERSONALIZED REPORT (Claude narrative) ──────
+        // Extract prose and bullets from narrative
+        const bulletIndex = cleanNarrative.indexOf('•');
+        const narrativeProse = bulletIndex === -1 ? cleanNarrative : cleanNarrative.substring(0, bulletIndex).trim();
+        const narrativeBullets = bulletIndex === -1 ? [] : cleanNarrative
+            .substring(bulletIndex)   // everything FROM the bullet onwards
+            .split('\n')               // split into individual lines
+            .filter(line => line.trim().startsWith('•'))  // keep only lines starting with •
+            .map(line => line.replace('•', '').trim())    // remove the • and trim whitespace
+
+        // ── YOUR PERSONALIZED REPORT ──────────────────────
         doc.font(boldFont).fontSize(14).fillColor(pink)
             .text('Your Personalized Report', 50, 178);
         doc.moveDown(0.5);
         doc.font(regularFont).fontSize(11).fillColor(black)
-            .text(cleanNarrative, { lineGap: 4 });
+            .text(narrativeProse, { lineGap: 4 });
 
         doc.y = doc.y + 20;
 
-        // ── RECOMMENDED FOCUS AREAS (pink pills, white text) ─
-        doc.font(boldFont).fontSize(14).fillColor(pink)
-            .text('Recommended Focus Areas');
-        doc.moveDown(0.8);
-
-        const actions = Array.isArray(priority_actions) ? priority_actions : JSON.parse(priority_actions);
-
-        actions.forEach((action) => {
+        narrativeBullets.forEach((bullet) => {
             const yPos = doc.y;
-            const textHeight = doc.heightOfString(action, { width: 475 });
+            const textHeight = doc.heightOfString(bullet, { width: 475 });
             const pillHeight = Math.max(36, textHeight + 24);
 
-            // Add new page if not enough space
             if (yPos + pillHeight > doc.page.height - 80) {
                 doc.addPage();
                 doc.y = 50;
@@ -92,7 +93,7 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
                 .fill();
 
             doc.font(regularFont).fontSize(11).fillColor(white)
-                .text(action, 60, currentY + 10, { width: 475 });
+                .text(bullet, 60, currentY + 10, { width: 475 });
 
             doc.y = currentY + pillHeight + 10;
         });

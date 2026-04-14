@@ -22,7 +22,7 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             .replace(/#{1,6}\s/g, '')
             .replace(/\*\*(.*?)\*\*/g, '$1')
             .replace(/\*(.*?)\*/g, '$1')
-            .replace(/•/g, '-')
+            // .replace(/•/g, '-')
             .replace(/---/g, '')
             .replace(/^Personalized Intro\s*/gm, '')
             .replace(/^Business Systems Narrative\s*/gm, '')
@@ -30,6 +30,14 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             .replace(/^Graduation Outlook\s*/gm, '')
             .trim()
         : '';
+
+    const bulletIndex = cleanNarrative.indexOf('•');
+    const narrativeProse = bulletIndex === -1 ? cleanNarrative : cleanNarrative.substring(0, bulletIndex).trim();
+    const narrativeBullets = bulletIndex === -1 ? [] : cleanNarrative
+        .substring(bulletIndex)
+        .split('\n')
+        .filter(line => line.trim().startsWith('•'))
+        .map(line => line.replace('•', '').trim());
 
     const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -62,20 +70,20 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
             <!-- Divider -->
             <div style="border-top: 1px solid #ddd; margin: 24px 32px;"></div>
 
-            <!-- Your Personalized Report (Claude narrative) -->
-            <div style="padding: 0 32px 24px 32px;">
-                <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 10px 0;">Your Personalized Report</h2>
-                <p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0; white-space: pre-wrap;">${cleanNarrative}</p>
-            </div>
+            <!-- Your Personalized Report (prose only) -->
+                <div style="padding: 0 32px 24px 32px;">
+                    <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 10px 0;">Your Personalized Report</h2>
+                    <p style="font-size: 14px; color: #333333; line-height: 1.7; margin: 0; white-space: pre-wrap;">${narrativeProse}</p>
+                </div>
 
-            <!-- Recommended Focus Areas — pink pills with white text -->
-            <div style="padding: 0 32px 24px 32px;">
-                <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 12px 0;">Recommended Focus Areas</h2>
-                ${actions.map((action) => `
-                    <div style="background-color: #FF206E; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 14px; color: #FFFFFF;">
-                        ${action}
-                    </div>
-                `).join('')}
+                <!-- Recommended Focus Areas — Claude bullets as pink pills -->
+                <div style="padding: 0 32px 24px 32px;">
+                    <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 12px 0;">Recommended Focus Areas</h2>
+                    ${narrativeBullets.map((bullet) => `
+                        <div style="background-color: #FF206E; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 14px; color: #FFFFFF;">
+                    ${bullet}
+                </div>
+            `).join('')}
             </div>
 
             <!-- What to Avoid — yellow pills with black text -->
