@@ -24,8 +24,6 @@ app.use('/api', pdfRoutes); // Registers pdf Route
 app.use('/api', settingsRoutes); // Registers settings Route
 app.use('/api', pathwayRoutes); // Registers pathway Route
 
-
-
 app.get('/', (req, res) => {
   res.json({ message: 'Server is running' });
 });
