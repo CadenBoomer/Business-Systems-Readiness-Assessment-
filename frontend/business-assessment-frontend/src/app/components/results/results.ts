@@ -89,7 +89,7 @@ export class Results implements OnInit, OnDestroy {
   // arrives, which fetch handles natively. Sends a POST with the user's form data.
   startStream(payload: any) {
     // Use fetch with streaming instead of EventSource since we need POST
-    fetch('https://assessment.thewebsitemembership.com/api/submit-assessment-stream', {
+    fetch('https://api.assessment.thewebsitemembership.com/api/submit-assessment-stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -219,12 +219,12 @@ export class Results implements OnInit, OnDestroy {
 
 
   downloadPDF() {
-    window.open(`https://assessment.thewebsitemembership.com/api/results/${this.submissionId}/pdf`, '_blank');
+    window.open(`https://api.assessment.thewebsitemembership.com/api/results/${this.submissionId}/pdf`, '_blank');
 
   }
 
   loadSettings() {
-    this.http.get<any[]>('https://assessment.thewebsitemembership.com/api/settings')
+    this.http.get<any[]>('https://api.assessment.thewebsitemembership.com/api/settings')
       .subscribe({
         next: (settings) => {
 

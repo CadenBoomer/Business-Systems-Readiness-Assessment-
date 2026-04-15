@@ -67,7 +67,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   loadSettings() {
-    this.http.get<any[]>('https://assessment.thewebsitemembership.com/api/settings',
+    this.http.get<any[]>('https://api.assessment.thewebsitemembership.com/api/settings',
       { headers: this.getHeaders() })
       .subscribe({
         next: (data) => {
@@ -84,7 +84,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   saveSetting() {
     if (!this.editingSetting) return;
-    this.http.put('https://assessment.thewebsitemembership.com/api/settings',
+    this.http.put('https://api.assessment.thewebsitemembership.com/api/settings',
       { setting_key: this.editingSetting.setting_key, setting_value: this.editingSetting.setting_value },
       { headers: this.getHeaders() })
       .subscribe({
@@ -97,7 +97,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   loadPathways() {
-    this.http.get<any[]>('https://assessment.thewebsitemembership.com/api/pathways',
+    this.http.get<any[]>('https://api.assessment.thewebsitemembership.com/api/pathways',
       { headers: this.getHeaders() })
       .subscribe({
         next: (data) => {
@@ -114,7 +114,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   savePathway() {
     if (!this.editingPathway) return;
-    this.http.put(`https://assessment.thewebsitemembership.com/api/pathways/${this.editingPathway.id}`,
+    this.http.put(`https://api.assessment.thewebsitemembership.com/api/pathways/${this.editingPathway.id}`,
       { description: this.editingPathway.description },
       { headers: this.getHeaders() })
       .subscribe({
@@ -128,7 +128,7 @@ export class Dashboard implements OnInit, OnDestroy {
   // ── QUESTIONS ──────────────────────────────────────
 
   loadQuestions() {
-    this.http.get<any[]>('https://assessment.thewebsitemembership.com/api/questions',
+    this.http.get<any[]>('https://api.assessment.thewebsitemembership.com/api/questions',
       { headers: this.getHeaders() })
       .subscribe({
         next: (data) => {
@@ -147,7 +147,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   saveQuestion() {
     if (!this.editingQuestion) return;
-    this.http.put(`https://assessment.thewebsitemembership.com/api/questions/${this.editingQuestion.id}`,
+    this.http.put(`https://api.assessment.thewebsitemembership.com/api/questions/${this.editingQuestion.id}`,
       { question_text: this.editingQuestion.question_text, display_order: this.editingQuestion.display_order },
       { headers: this.getHeaders() })
       .subscribe({
@@ -170,7 +170,7 @@ export class Dashboard implements OnInit, OnDestroy {
 
   saveOption() {
     if (!this.editingOption) return;
-    this.http.put(`https://assessment.thewebsitemembership.com/api/answers/${this.editingOption.id}`,
+    this.http.put(`https://api.assessment.thewebsitemembership.com/api/answers/${this.editingOption.id}`,
       { answer_text: this.editingOption.answer_text, display_order: this.editingOption.display_order },
       { headers: this.getHeaders() })
       .subscribe({
@@ -186,7 +186,7 @@ export class Dashboard implements OnInit, OnDestroy {
   // ── SUBMISSIONS ────────────────────────────────────
 
   loadSubmissions() {
-    this.http.get<any>(`https://assessment.thewebsitemembership.com/api/submissions?page=${this.currentPage}`,
+    this.http.get<any>(`https://api.assessment.thewebsitemembership.com/api/submissions?page=${this.currentPage}`,
       // Sends the current page number to the backend as a query parameter.
       { headers: this.getHeaders() })
       .subscribe({
@@ -204,7 +204,7 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   downloadSubmissionPDF(id: number) {
-    window.open(`https://assessment.thewebsitemembership.com/api/results/${id}/pdf`, '_blank');
+    window.open(`https://api.assessment.thewebsitemembership.com/api/results/${id}/pdf`, '_blank');
   }
 
 
@@ -256,7 +256,7 @@ export class Dashboard implements OnInit, OnDestroy {
       return;
     }
 
-    this.http.put('https://assessment.thewebsitemembership.com/api/admin/credentials',
+    this.http.put('https://api.assessment.thewebsitemembership.com/api/admin/credentials',
       {
         current_password: this.currentPassword,
         new_username: this.newUsername || undefined,
