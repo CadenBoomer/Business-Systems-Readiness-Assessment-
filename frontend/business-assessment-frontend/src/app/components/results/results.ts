@@ -54,7 +54,7 @@ export class Results implements OnInit, OnDestroy {
   constructor(public router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    
+
     const state = history.state;
 
     if (state?.streaming && state?.payload) {
@@ -215,7 +215,7 @@ export class Results implements OnInit, OnDestroy {
     return bulletSection
       .split('\n')
       .filter(line => line.trim().startsWith('•'))
-      .map(line => line.replace('•', '').trim());
+      .map(line => line.replace('•', '').replace(/\*\*(.*?)\*\*/g, '$1').trim())
   }
 
 
