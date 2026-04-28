@@ -25,3 +25,7 @@ body {
   background-color: var(--beige);
   color: var(--black);
 }
+
+.grecaptcha-badge {
+  visibility: hidden;
+}

@@ -51,7 +51,7 @@
                     demand. Please check your email for your full results, or try again later.</p>
             </section>
             }
-            
+
             <!-- Rest of results — show after ML responds -->
             @if (pathway) {
 
@@ -59,6 +59,10 @@
             @if (narrativeBullets.length > 0) {
             <section class="section">
                 <h2 class="section-title">Recommended Focus Areas</h2>
+                <p class="section-text">The focus areas below reflect the key systems for your pathway stage. Some of
+                    these may already be in place in your business — and that's a great sign. Use this list to spot
+                    where gaps still exist and focus your energy there — that's what graduation to the next pathway
+                    looks like.</p>
                 <ul class="action-list">
                     @for (bullet of narrativeBullets; track $index) {
                     <li class="action-item">{{ bullet }}</li>

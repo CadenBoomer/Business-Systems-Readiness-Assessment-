@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://api.assessment.thewebsitemembership.com'
+  apiUrl: 'http://localhost:3000'
 };

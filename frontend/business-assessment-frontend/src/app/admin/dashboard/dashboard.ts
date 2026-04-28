@@ -42,6 +42,8 @@ export class Dashboard implements OnInit, OnDestroy {
 
   searchQuery: string = '';
 
+  selectedSubmissions: Set<number> = new Set();
+
   private tokenCheckInterval: any;
 
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
@@ -207,6 +209,30 @@ export class Dashboard implements OnInit, OnDestroy {
     window.open(`https://api.assessment.thewebsitemembership.com/api/results/${id}/pdf`, '_blank');
   }
 
+  toggleSelection(id: number) {
+    if (this.selectedSubmissions.has(id)) {
+      this.selectedSubmissions.delete(id);
+    } else {
+      this.selectedSubmissions.add(id);
+    }
+  }
+
+  deleteSelected() {
+    if (!this.selectedSubmissions.size) return;
+    if (!confirm(`Delete ${this.selectedSubmissions.size} submission(s)? This cannot be undone.`)) return;
+
+    const ids = Array.from(this.selectedSubmissions);
+    this.http.delete('https://api.assessment.thewebsitemembership.com/api/submissions',
+      { headers: this.getHeaders(), body: { ids } })
+      .subscribe({
+        next: () => {
+          this.selectedSubmissions.clear();
+          this.loadSubmissions();
+        },
+        error: (err) => console.error(err)
+      });
+  }
+
 
   startTokenCheck() {
     // Check every 30 seconds if token is still valid
@@ -282,13 +308,13 @@ export class Dashboard implements OnInit, OnDestroy {
   }
 
   get filteredSubmissions() {
-  if (!this.searchQuery) return this.submissions;
-  const query = this.searchQuery.toLowerCase();
-  return this.submissions.filter(s =>
-    s.first_name.toLowerCase().includes(query) ||
-    s.last_name.toLowerCase().includes(query) ||
-    s.email.toLowerCase().includes(query)
-  );
-}
+    if (!this.searchQuery) return this.submissions;
+    const query = this.searchQuery.toLowerCase();
+    return this.submissions.filter(s =>
+      s.first_name.toLowerCase().includes(query) ||
+      s.last_name.toLowerCase().includes(query) ||
+      s.email.toLowerCase().includes(query)
+    );
+  }
 
 }

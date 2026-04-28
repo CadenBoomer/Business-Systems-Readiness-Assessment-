@@ -100,41 +100,50 @@
                 <span
                     style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px;">🔍</span>
                 <input type="text" class="input-field" placeholder="Search by name or email..."
-                    [(ngModel)]="searchQuery" style="padding-left: 42px;",>
+                    [(ngModel)]="searchQuery" style="padding-left: 42px;">
             </div>
+
+            <!-- Delete Button -->
+            @if (selectedSubmissions.size > 0) {
+            <div style="margin-bottom: 16px;">
+                <button class="cancel-btn" (click)="deleteSelected()">
+                    Delete Selected ({{ selectedSubmissions.size }})
+                </button>
+            </div>
+            }
+
             @for (submission of filteredSubmissions; track submission.id) {
-            <div class="submission-card">
+            <div class="submission-card"
+                [style.border]="selectedSubmissions.has(submission.id) ? '2px solid var(--primary-pink)' : ''">
                 <div class="submission-header">
-                    <div>
-                        <p class="submission-name">{{ submission.first_name }} {{ submission.last_name }}</p>
-                        <p class="submission-email">{{ submission.email }}</p>
-                        <p class="submission-date">{{ submission.created_at | date:'medium' }}</p>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <input type="checkbox" [checked]="selectedSubmissions.has(submission.id)"
+                            (change)="toggleSelection(submission.id)"
+                            style="width: 16px; height: 16px; accent-color: var(--primary-pink);">
+                        <div>
+                            <p class="submission-name">{{ submission.first_name }} {{ submission.last_name }}</p>
+                            <p class="submission-email">{{ submission.email }}</p>
+                            <p class="submission-date">{{ submission.created_at | date:'medium' }}</p>
+                        </div>
                     </div>
                     <div class="submission-right">
                         <span class="pathway-badge">{{ submission.pathway }}</span>
-                        <button class="download-btn" (click)="downloadSubmissionPDF(submission.id)">
-                            Download PDF
-                        </button>
+                        <button class="download-btn" (click)="downloadSubmissionPDF(submission.id)">Download
+                            PDF</button>
                     </div>
                 </div>
             </div>
             }
 
-            <!-- Pagination -->
-            <!-- Only shows pagination controls if there's more than one page — no point showing Prev/Next 
-              if everything fits on one page. -->
             @if (totalPages > 1) {
             <div class="pagination">
-                <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
-                    ← Prev
-                </button>
+                <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">←
+                    Prev</button>
                 <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
-                <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
-                    Next →
-                </button>
+                <button class="page-btn" [disabled]="currentPage === totalPages"
+                    (click)="goToPage(currentPage + 1)">Next →</button>
             </div>
             }
-
         </div>
         }
 

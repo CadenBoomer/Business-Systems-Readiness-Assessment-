@@ -79,6 +79,7 @@ const sendMail = async (toEmail, first_name, last_name, pathway, reasoning, conf
                 <!-- Recommended Focus Areas — Claude bullets as pink pills -->
                 <div style="padding: 0 32px 24px 32px;">
                     <h2 style="font-size: 16px; color: #FF206E; margin: 0 0 12px 0;">Recommended Focus Areas</h2>
+                    <p style="font-size: 13px; color: #555555; line-height: 1.6; margin: 0 0 12px 0;">The focus areas below reflect the key systems for your pathway stage. Some of these may already be in place in your business — and that's a great sign. Use this list to spot where gaps still exist and focus your energy there — that's what graduation to the next pathway looks like.</p>
                     ${narrativeBullets.map((bullet) => `
                         <div style="background-color: #FF206E; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; font-size: 14px; color: #FFFFFF;">
                     ${bullet}

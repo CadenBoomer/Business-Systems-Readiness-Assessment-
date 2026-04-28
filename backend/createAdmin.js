@@ -4,8 +4,8 @@ require('dotenv').config();
 
 const createAdmin = async () => {
     try {
-        const username = process.env.ADMIN_USER;
-        const password = process.env.ADMIN_PASS;
+        const username = process.env.ADMIN_USERNAME;
+        const password = process.env.ADMIN_PASSWORD;
 
         const hashedPassword = await bcrypt.hash(password, 10);
 

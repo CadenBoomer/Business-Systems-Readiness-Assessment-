@@ -92,7 +92,8 @@ margin-bottom: 40px — space between last button and the Next button */
   border-radius: 50px;
   background-color: var(--off-white);
   font-family: 'League Spartan', sans-serif;
-  font-size: 16px;
+  font-size: 18px;
+   color: var(--black);
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
@@ -106,7 +107,9 @@ transition: all 0.2s ease — smooth animation when state changes
 text-align: left — keeps text left aligned inside the button */
 
 .option-btn:hover {
+  /* background-color: #f0ede0; */
   background-color: #f0ede0;
+  /* #d4d0bc */
 }
 /* Slightly darker beige when you hover over a button */
 
@@ -140,7 +143,7 @@ background-color: transparent — empty circle by default */
 
 .next-btn {
   padding: 14px 40px;
-  background-color: var(--primary-pink);
+  background-color: #FF0060;
   color: var(--white);
   border: none;
   border-radius: 50px;
@@ -258,7 +261,7 @@ transition: background-color — smoothly fills when answered */
   }
 
   .option-btn {
-    font-size: 14px;
+    font-size: 18px;
     padding: 14px 18px;
   }
 

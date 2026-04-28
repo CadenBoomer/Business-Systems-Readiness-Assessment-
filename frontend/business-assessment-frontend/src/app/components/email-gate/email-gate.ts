@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './email-gate.html',
   styleUrl: './email-gate.css',
 })
-export class EmailGate {
+export class EmailGate implements AfterViewInit {
 
   firstName: string = '';
   lastName: string = '';
@@ -17,6 +17,7 @@ export class EmailGate {
   consent: boolean = false;
   responses: { [key: string]: string } = {};
   isLoading: boolean = false;
+  recaptchaToken: string = '';
 
   // These are the component's properties:
 
@@ -26,6 +27,8 @@ export class EmailGate {
   // isLoading — tracks whether the API call is in progress. You could use this to show a loading spinner on the 
   // button while waiting for the backend
 
+
+
   constructor(private router: Router, private http: HttpClient) {
 
     // Grab the responses passed from the assessment component
@@ -33,6 +36,10 @@ export class EmailGate {
     if (state?.responses) {
       this.responses = state.responses;
     }
+  }
+
+  ngAfterViewInit() {
+    // v3 runs invisibly, no widget to render
   }
 
   // private router: Router — injects the router so you can navigate
@@ -62,31 +69,29 @@ export class EmailGate {
     if (!this.isFormValid()) return;
     this.isLoading = true;
 
-    //     Double checks form is valid before doing anything — safety net
-    // Sets isLoading to true so you can show a loading state on the button
+    (window as any).grecaptcha.ready(() => {
+      (window as any).grecaptcha.execute('6LcE_bosAAAAAGgx3NoCQrkS6g_qLiBBr4xfF4ig', { action: 'submit' }).then((token: string) => {
+        const payload = {
+          first_name: this.firstName,
+          last_name: this.lastName,
+          email: this.email,
+          responses: this.responses,
+          recaptchaToken: token
+        };
 
-    const payload = {
-      first_name: this.firstName,
-      last_name: this.lastName,
-      email: this.email,
-      responses: this.responses,
-    };
-
-    // Builds the object to send to your backend. Packages up all the form data and the assessment responses into one 
-    // object.
-    //Uses _ to match the backend variables
-
-    this.router.navigate(['/results'], {
-      state: {
-        streaming: true,
-        payload: payload
-      }
+        this.router.navigate(['/results'], {
+          state: {
+            streaming: true,
+            payload: payload
+          }
+        });
+      });
     });
   }
-
-  // instead of waiting for the API call to finish, it navigates to the results page immediately and 
-  // passes the payload along. The results page handles the actual API call and streaming.
 }
+
+// instead of waiting for the API call to finish, it navigates to the results page immediately and 
+// passes the payload along. The results page handles the actual API call and streaming.
 
 
 
@@ -116,4 +121,67 @@ export class EmailGate {
 //         this.isLoading = false;
 //       }
 //     });
+// }
+
+
+
+
+
+//Test without captcha:
+// import { Component, AfterViewInit } from '@angular/core';
+// import { FormsModule } from '@angular/forms';
+// import { Router } from '@angular/router';
+// import { HttpClient } from '@angular/common/http';
+
+// @Component({
+//   selector: 'app-email-gate',
+//   imports: [FormsModule],
+//   templateUrl: './email-gate.html',
+//   styleUrl: './email-gate.css',
+// })
+// export class EmailGate implements AfterViewInit {
+
+//   firstName: string = '';
+//   lastName: string = '';
+//   email: string = '';
+//   consent: boolean = false;
+//   responses: { [key: string]: string } = {};
+//   isLoading: boolean = false;
+//   recaptchaToken: string = '';
+
+//   constructor(private router: Router, private http: HttpClient) {
+//     const state = history.state;
+//     if (state?.responses) {
+//       this.responses = state.responses;
+//     }
+//   }
+
+//   ngAfterViewInit() {}
+
+//   isFormValid(): boolean {
+//     return this.firstName.trim() !== '' &&
+//       this.lastName.trim() !== '' &&
+//       this.email.trim() !== '' &&
+//       this.consent;
+//   }
+
+//   submitForm() {
+//     if (!this.isFormValid()) return;
+//     this.isLoading = true;
+
+//     const payload = {
+//       first_name: this.firstName,
+//       last_name: this.lastName,
+//       email: this.email,
+//       responses: this.responses,
+//       recaptchaToken: 'local-testing'
+//     };
+
+//     this.router.navigate(['/results'], {
+//       state: {
+//         streaming: true,
+//         payload: payload
+//       }
+//     });
+//   }
 // }

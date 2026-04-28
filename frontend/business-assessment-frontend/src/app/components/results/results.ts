@@ -54,6 +54,7 @@ export class Results implements OnInit, OnDestroy {
   constructor(public router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
+    
     const state = history.state;
 
     if (state?.streaming && state?.payload) {

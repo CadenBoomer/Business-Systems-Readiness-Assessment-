@@ -76,6 +76,14 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
 
         doc.y = doc.y + 20;
 
+        // ── RECOMMENDED FOCUS AREAS ──────────────────────────────
+doc.font(boldFont).fontSize(14).fillColor(pink)
+    .text('Recommended Focus Areas');
+    doc.moveDown(0.5);
+    doc.font(regularFont).fontSize(11).fillColor(grey)
+        .text('The focus areas below reflect the key systems for your pathway stage. Some of these may already be in place in your business — and that\'s a great sign. Use this list to spot where gaps still exist and focus your energy there — that\'s what graduation to the next pathway looks like.', { lineGap: 4 });
+    doc.moveDown(0.8);
+
         narrativeBullets.forEach((bullet) => {
             const yPos = doc.y;
             const textHeight = doc.heightOfString(bullet, { width: 475 });
@@ -138,6 +146,28 @@ const generatePDF = (first_name, last_name, pathway, reasoning, confidence_score
         doc.moveDown(0.5);
         doc.font(regularFont).fontSize(11).fillColor(black)
             .text(graduation_outlook, { lineGap: 4 });
+
+        doc.moveDown(2);
+
+        // ── CTA ──────────────────────────────────────────────
+        // Add new page if not enough space
+        if (doc.y + 120 > doc.page.height - 80) {
+            doc.addPage();
+            doc.y = 50;
+        }
+
+        doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#dddddd').lineWidth(1).stroke();
+        doc.moveDown(1);
+
+        doc.font(boldFont).fontSize(14).fillColor(pink)
+            .text('Ready To Take The Next Step?', { align: 'center' });
+        doc.moveDown(0.5);
+        doc.font(regularFont).fontSize(11).fillColor(black)
+            .text('Visit The Website Membership to access the tools, training, and support to implement your pathway.',
+                { align: 'center', lineGap: 4 });
+        doc.moveDown(0.8);
+        doc.font(boldFont).fontSize(11).fillColor(pink)
+            .text('https://thewebsitemembership.com', { align: 'center', link: 'https://thewebsitemembership.com' });
 
         doc.moveDown(2);
 

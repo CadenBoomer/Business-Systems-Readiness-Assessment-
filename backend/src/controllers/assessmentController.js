@@ -11,9 +11,16 @@ const { sendMail, sendNotification } = require('../services/email');
 // ML endpoint. Axios is what does that forwarding.
 
 exports.submitAssessment = async (req, res) => {
-    const { first_name, last_name, email, responses } = req.body;
+    const { first_name, last_name, email, responses, recaptchaToken } = req.body;
 
     // Destructures the data sent from the email gate form. responses is the object with q1-q12 answers.
+
+    // Verify reCAPTCHA v3
+    // const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${recaptchaToken}`;
+    // const recaptchaVerify = await axios.post(verifyUrl);
+    // if (!recaptchaVerify.data.success || recaptchaVerify.data.score < 0.5) {
+    //     return res.status(400).json({ error: 'reCAPTCHA verification failed' });
+    // }
 
     try {
         // Call real ML API
@@ -202,7 +209,14 @@ exports.submitAssessment = async (req, res) => {
 
 
 exports.submitAssessmentStream = async (req, res) => {
-    const { first_name, last_name, email, responses } = req.body;
+    const { first_name, last_name, email, responses, recaptchaToken } = req.body;
+
+    // Verify reCAPTCHA v3
+    // const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET}&response=${recaptchaToken}`;
+    // const recaptchaVerify = await axios.post(verifyUrl);
+    // if (!recaptchaVerify.data.success || recaptchaVerify.data.score < 0.5) {
+    //     return res.status(400).json({ error: 'reCAPTCHA verification failed' });
+    // }
 
     // Set up SSE headers
     res.setHeader('Content-Type', 'text/event-stream');
@@ -433,6 +447,25 @@ exports.getSubmissions = async (req, res) => {
             total
         });
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.deleteSubmissions = async (req, res) => {
+    const { ids } = req.body;
+
+    if (!ids || !ids.length) {
+        return res.status(400).json({ error: 'No submission IDs provided' });
+    }
+
+    try {
+        await pool.query(
+            `DELETE FROM submissions WHERE id IN (${ids.map(() => '?').join(',')})`,
+            ids
+        );
+        res.status(200).json({ message: 'Submissions deleted successfully' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Internal server error' });

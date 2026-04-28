@@ -6,5 +6,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 router.post('/submit-assessment', assessmentController.submitAssessment)
 router.post('/submit-assessment-stream', assessmentController.submitAssessmentStream);
 router.get('/submissions', authMiddleware, assessmentController.getSubmissions);
+router.delete('/submissions/', authMiddleware, assessmentController.deleteSubmissions);
 
 module.exports = router;

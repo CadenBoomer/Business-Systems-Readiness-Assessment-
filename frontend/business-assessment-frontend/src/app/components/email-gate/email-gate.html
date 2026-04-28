@@ -29,6 +29,7 @@
                 <label for='consent'> I agree to receive emails with my results and related content. </label>
             </div>
 
+
             <button class="submit-btn" [disabled]="!isFormValid() || isLoading" (click)="submitForm()">
                 @if (isLoading) {
                 <span class="spinner"></span>
@@ -37,6 +38,14 @@
                 Send My Results
                 }
             </button>
+
+            <p style="font-size: 11px; color: #888; text-align: center;">
+                This site is protected by reCAPTCHA and the Google
+                <a href="https://policies.google.com/privacy" target="_blank" style="color: #888;">Privacy Policy</a>
+                and
+                <a href="https://policies.google.com/terms" target="_blank" style="color: #888;">Terms of Service</a>
+                apply.
+            </p>
 
             <!-- [disabled]="!isFormValid()" — calls isFormValid() from TypeScript. If it returns false the button is disabled. The ! flips it — so if the form is NOT valid, disable the button
             (click)="submitForm()" — calls submitForm() when clicked -->
