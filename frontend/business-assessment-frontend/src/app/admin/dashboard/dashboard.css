@@ -49,7 +49,7 @@
 }
 
 .tab-btn {
-  padding: 14px 32px;
+  padding: 15px 32px;
   background: none;
   border: none;
   font-family: 'League Spartan', sans-serif;
@@ -128,7 +128,7 @@
 }
 
 .edit-btn {
-  padding: 6px 14px;
+  padding: 12px 20px;
   background-color: var(--primary-pink);
   color: var(--white);
   border: none;
@@ -144,7 +144,7 @@
 }
 
 .save-btn {
-  padding: 6px 14px;
+  padding: 12px 20px;
   background-color: var(--primary-teal);
   color: var(--black);
   border: none;
@@ -156,7 +156,7 @@
 }
 
 .cancel-btn {
-  padding: 6px 14px;
+  padding: 12px 20px;
   background-color: #ddd;
   color: var(--black);
   border: none;
@@ -252,12 +252,12 @@
   color: var(--white);
   font-size: 13px;
   font-weight: 700;
-  padding: 6px 16px;
+  padding: 12px 20px;
   border-radius: 50px;
 }
 
 .download-btn {
-  padding: 8px 20px;
+  padding: 12px 20px;
   background-color: var(--black);
   color: var(--white);
   border: none;
@@ -304,7 +304,7 @@ input[type="number"] {
 }
 
 .page-btn {
-  padding: 8px 20px;
+  padding: 12px 20px;
   background-color: var(--primary-pink);
   color: var(--white);
   border: none;
